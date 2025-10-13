@@ -93,7 +93,29 @@ function fmt(n){try{return Number(n).toLocaleString('th-TH');}catch(e){return n;
 function listify(s){return (s||"").split(",").map(x=>x.trim()).filter(Boolean);}
 function parseDate(s){if(!s) return 0;const t=s.trim().replace(" ","T");const d=new Date(t);return isNaN(d.getTime())?0:d.getTime();}
 function updateCurrentCat(){const cur=document.getElementById("cat").value||"";document.getElementById("currentCat").textContent=cur||"สินค้าทั้งหมด";}
-function pickBuyLink(item){const dest=(item["ปุ่มสั่งซื้อให้เด้งไปที่ (facebook|line|custom_url)"]||CONFIG.defaultOrderTarget).toLowerCase();if(dest==="facebook")return item["ลิงก์โพสต์ Facebook (ถ้ามี)"]||CONFIG.facebookPageUrl;if(dest==="line")return CONFIG.lineUrl;if(dest==="custom_url")return item["ลิงก์ปลายทางปุ่มสั่งซื้อ (ถ้าเลือก custom_url ให้ใส่ที่นี่)"]||CONFIG.facebookPageUrl;return CONFIG.facebookPageUrl;}
+function pickBuyLink(item) {
+  // ✅ ลิงก์เพจหลัก JUST COM
+  const PAGE_URL = "https://www.facebook.com/share/1B8mNcdPZb/?mibextid=wwXIfr";
+
+  // ✅ อ่านค่าปุ่มปลายทางจาก CSV (ป้องกันชื่อคอลัมน์ไม่ตรง 100%)
+  const dest = (
+    item["ปุ่มสั่งซื้อให้เด้งไปที่ (facebook|line|custom_url)"] ||
+    item["ปุ่มสั่งซื้อให้เด้งไปที่"] ||
+    CONFIG.defaultOrderTarget
+  ).toLowerCase();
+
+  // ✅ ดึงลิงก์จาก CSV
+  const fb = item["ลิงก์โพสต์ Facebook (ถ้ามี)"] || PAGE_URL;
+  const custom = item["ลิงก์ปลายทางปุ่มสั่งซื้อ (ถ้าเลือก custom_url ให้ใส่ที่นี่)"] || "";
+
+  // ✅ ตัดสินใจปลายทางลิงก์
+  if (dest === "facebook") return fb;
+  if (dest === "line") return CONFIG.lineUrl;
+  if (dest === "custom_url") return custom || PAGE_URL;
+
+  // ✅ fallback ถ้าไม่มีอะไรเลย
+  return PAGE_URL;
+}
 function isNewItem(item){const tags=(item["แท็ก (คั่นด้วย ,)"]||"").toLowerCase();if(tags.includes("new"))return true;const d=item["วันที่รับของ (YYYY-MM-DD)"]||"";if(!/^\d{4}-\d{2}-\d{2}$/.test(d))return false;const now=new Date(),dt=new Date(d+"T00:00:00");const diff=(now-dt)/86400000;return diff<=14;}
 const lb={root:null,main:null,thumbs:null,title:null,spec:null,desc:null,open(item){const imgs=[item["ลิงก์รูปภาพหลัก"],...(item["ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)"]||"").split(",").map(s=>s.trim()).filter(Boolean)].filter(Boolean);this.title.textContent=item["ชื่อสินค้า"]||item["รุ่นย่อย"]||item["SKU"]||"";this.main.src=imgs[0]||"";this.thumbs.innerHTML="";imgs.forEach((u,i)=>{const im=document.createElement("img");im.src=u;im.alt="img"+i;im.addEventListener("click",()=>this.main.src=u);this.thumbs.appendChild(im);});this.spec.innerHTML=[item["ยี่ห้อ/แบรนด์"]?`<div><b>แบรนด์:</b> ${item["ยี่ห้อ/แบรนด์"]}</div>`:"",item["รุ่นย่อย"]?`<div><b>รุ่น:</b> ${item["รุ่นย่อย"]}</div>`:"",item["ชิป/ซีรีส์ (ถ้าเป็นการ์ดจอให้ใส่เช่น RTX 3060 Ti / RX 6700 XT)"]?`<div><b>ชิป/ซีรีส์:</b> ${item["ชิป/ซีรีส์ (ถ้าเป็นการ์ดจอให้ใส่เช่น RTX 3060 Ti / RX 6700 XT)"]}</div>`:"",item["สเปกย่อย (VRAM/ขนาด/สี ฯลฯ)"]?`<div><b>สเปก:</b> ${item["สเปกย่อย (VRAM/ขนาด/สี ฯลฯ)"]}</div>`:"",item["สภาพ"]?`<div><b>สภาพ:</b> ${item["สภาพ"]}</div>`:"",item["รับประกัน (วัน)"]?`<div><b>ประกัน:</b> ${item["รับประกัน (วัน)"]} วัน</div>`:"",item["ราคา (THB)"]?`<div><b>ราคา:</b> ${fmt(item["ราคา (THB)"])} ฿</div>`:""] .filter(Boolean).join("");this.desc.textContent=item["รายละเอียดเพิ่มเติม"]||"";this.root.classList.add("open");},close(){this.root.classList.remove("open");this.main.src="";this.thumbs.innerHTML="";this.spec.innerHTML="";this.desc.textContent="";}};
 function initLightbox(){lb.root=document.getElementById("lightbox");lb.main=document.getElementById("lb-mainimg");lb.thumbs=document.getElementById("lb-thumbs");lb.title=document.getElementById("lb-title");lb.spec=document.getElementById("lb-spec");lb.desc=document.getElementById("lb-desc");document.getElementById("lb-close").addEventListener("click",()=>lb.close());lb.root.addEventListener("click",(e)=>{if(e.target===lb.root)lb.close();});}
