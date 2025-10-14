@@ -87,7 +87,7 @@ footer.f{max-width:var(--maxw);margin:24px auto 60px;color:var(--muted);padding:
   </div>
 </div>
 <script>
-const CONFIG={mode:"csv",csvPath:"data/justcom_inventory.csv",gsheetCsvUrl:"",defaultOrderTarget:"facebook",facebookPageUrl:"https://m.me/justcomth",lineUrl:"https://line.me/R/ti/p/~your_line_id"};
+const CONFIG={mode:"csv",csvPath:"./justcom_inventory.csv",gsheetCsvUrl:"",defaultOrderTarget:"facebook",facebookPageUrl:"https://m.me/justcomth",lineUrl:"https://line.me/R/ti/p/~your_line_id"};
 function csvToArray(str,delim=","){const rows=str.split("\n").filter(x=>x.trim().length);if(!rows.length)return[];const headers=rows.shift().split(delim).map(h=>h.trim());return rows.map(row=>{const cols=[];let cur="",inQ=false;for(let i=0;i<row.length;i++){const c=row[i];if(c=='"'){inQ=!inQ;}else if(c===delim && !inQ){cols.push(cur);cur="";}else{cur+=c;}}cols.push(cur);const obj={};headers.forEach((h,i)=>obj[h]=(cols[i]??"").trim());return obj;});}
 function fmt(n){try{return Number(n).toLocaleString('th-TH');}catch(e){return n;}}
 function listify(s){return (s||"").split(",").map(x=>x.trim()).filter(Boolean);}
