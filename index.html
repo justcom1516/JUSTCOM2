@@ -78,23 +78,42 @@ footer{text-align:center;padding:var(--gap);color:var(--muted);font-size:.9rem;b
   let ALL_ITEMS = [];
 
   function parseCSV(text) {
-    // แก้ไขจาก .split('\\n') เป็น .split('\\n').join('\\n').split('\\n') เพื่อแก้ปัญหาการแบ่งบรรทัดที่ต่างกัน
-    const lines = text.trim().split('\\n').join('\n').split('\n'); // <-- บรรทัดนี้ได้รับการแก้ไข
+    // พยายามจัดการการแบ่งบรรทัดหลายรูปแบบ
+    const lines = text.trim().replace(/\\r\\n|\\r|\\n/g, '\n').split('\n');
+    if (lines.length <= 1) return [];
+
     const headers = lines[0].split(',').map(h => h.trim());
-    return lines.slice(1).map(line => {
-      // ใช้ regex เพื่อแบ่งตาม comma ที่ไม่ได้อยู่ในเครื่องหมายคำพูด (")
-      const values = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
-      let obj = {};
-      headers.forEach((header, i) => {
-        let value = values[i] ? values[i].trim() : '';
-        // ลบเครื่องหมายคำพูด (") ที่ครอบอยู่
-        if (value.startsWith('"') && value.endsWith('"')) {
-            value = value.substring(1, value.length - 1);
+    const items = [];
+
+    // Regex ที่ซับซ้อนขึ้นเพื่อรองรับข้อมูลที่ถูกครอบด้วยเครื่องหมายคำพูด (")
+    const csvPattern = /(?:"(?:[^"]|"")*"|[^,"]+)(?:,|$)/g;
+
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+
+        let values = [];
+        let match;
+        // ลูปหาค่าที่ตรงกับ pattern ในแต่ละบรรทัด
+        while (match = csvPattern.exec(line)) {
+            let value = match[0].replace(/,$/, '').trim(); // ลบ comma ที่ท้ายและ trim
+            // ลบเครื่องหมายคำพูด (") ที่ครอบอยู่และแทนที่ "" ด้วย "
+            if (value.startsWith('"') && value.endsWith('"')) {
+                value = value.substring(1, value.length - 1).replace(/""/g, '"');
+            }
+            values.push(value);
         }
-        obj[header] = value;
-      });
-      return obj;
-    }).filter(obj => Object.keys(obj).length > 0 && obj[headers[0]] !== ''); // กรองแถวว่าง
+
+        if (values.length > 0) {
+            let obj = {};
+            // แมปค่ากับ header
+            headers.forEach((header, index) => {
+                obj[header] = values[index] !== undefined ? values[index].trim() : '';
+            });
+            items.push(obj);
+        }
+    }
+    return items;
   }
   
   function parseDate(str) {
@@ -115,17 +134,22 @@ footer{text-align:center;padding:var(--gap);color:var(--muted);font-size:.9rem;b
   }
 
   function render(items) {
-    if (items.length === 0) {
+    // กรองสินค้าที่สถานะเป็น 'hidden' ออกก่อน หากไม่ได้เลือกฟิลเตอร์สถานะเป็น 'hidden'
+    const filteredItems = items.filter(it => {
+        const itemStatus = (it["สถานะประกาศ (active|hidden|sold)"] || '').toLowerCase();
+        return status.value === 'hidden' || itemStatus !== 'hidden';
+    });
+    
+    if (filteredItems.length === 0) {
       grid.innerHTML = '<div class="loader">ไม่พบสินค้าที่ตรงกับเงื่อนไข</div>';
       return;
     }
     const placeholderImg = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%23222a33"/%3E%3Ctext x="50" y="55" font-family="sans-serif" font-size="14" fill="%2393a1b3" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
 
-    grid.innerHTML = items.map(it => {
+    grid.innerHTML = filteredItems.map(it => {
       const isSold = (it["สถานะประกาศ (active|hidden|sold)"] || '').toLowerCase() === 'sold';
       const isHidden = (it["สถานะประกาศ (active|hidden|sold)"] || '').toLowerCase() === 'hidden';
-      if (isHidden && status.value !== 'hidden') return ''; // ซ่อนรายการที่สถานะเป็น hidden ยกเว้นจะเลือกฟิลเตอร์สถานะ hidden
-
+      
       const price = parseInt(it["ราคา (THB)"], 10);
       
       let img = it["ลิงก์รูปภาพหลัก"];
@@ -183,10 +207,8 @@ footer{text-align:center;padding:var(--gap);color:var(--muted);font-size:.9rem;b
     // กรองตามสถานะที่เลือก
     if (sv) {
         items = items.filter(it => (it["สถานะประกาศ (active|hidden|sold)"] || "").toLowerCase() === sv);
-    } else {
-        // ถ้าไม่ได้เลือกสถานะใดๆ ให้แสดงเฉพาะ active และ sold (ซ่อน hidden ออกไปก่อน)
-        items = items.filter(it => (it["สถานะประกาศ (active|hidden|sold)"] || "").toLowerCase() !== 'hidden');
-    }
+    } 
+    // หากไม่ได้เลือกสถานะ (sv เป็น "") ให้แสดงทั้งหมด รวมถึง hidden ด้วย เพื่อให้ setupCategories ทำงานได้ถูกต้อง
     
     if (cv) items = items.filter(it => (it["หมวดหมู่"] || "") === cv);
     
@@ -212,6 +234,7 @@ footer{text-align:center;padding:var(--gap);color:var(--muted);font-size:.9rem;b
   }
   
   function setupCategories(items) {
+      // สร้างรายการหมวดหมู่จากสินค้าทั้งหมด (รวม hidden ด้วย)
       const categories = [...new Set(items.map(it => it['หมวดหมู่']).filter(Boolean))];
       cat.innerHTML = '<option value="">ทุกหมวดหมู่</option>' + categories.map(c => `<option value="${c}">${c}</option>`).join('');
       
@@ -256,7 +279,7 @@ footer{text-align:center;padding:var(--gap);color:var(--muted);font-size:.9rem;b
       status.addEventListener('change', applyFilters);
 
     } catch (error) {
-      loader.innerHTML = `เกิดข้อผิดพลาดในการโหลดไฟล์ CSV: <br>${error.message}`;
+      loader.innerHTML = `เกิดข้อผิดพลาดในการโหลดไฟล์ CSV: <br> ${error.message}`;
       console.error("Failed to load or parse CSV:", error);
     }
   }
