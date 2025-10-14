@@ -90,7 +90,16 @@ footer.f{max-width:var(--maxw);margin:24px auto 60px;color:var(--muted);padding:
 const CONFIG={mode:"csv",csvPath:"./justcom_inventory.csv",gsheetCsvUrl:"",defaultOrderTarget:"facebook",facebookPageUrl:"https://m.me/justcomth",lineUrl:"https://line.me/R/ti/p/~your_line_id"};
 function csvToArray(str,delim=","){const rows=str.split("\n").filter(x=>x.trim().length);if(!rows.length)return[];const headers=rows.shift().split(delim).map(h=>h.trim());return rows.map(row=>{const cols=[];let cur="",inQ=false;for(let i=0;i<row.length;i++){const c=row[i];if(c=='"'){inQ=!inQ;}else if(c===delim && !inQ){cols.push(cur);cur="";}else{cur+=c;}}cols.push(cur);const obj={};headers.forEach((h,i)=>obj[h]=(cols[i]??"").trim());return obj;});}
 function fmt(n){try{return Number(n).toLocaleString('th-TH');}catch(e){return n;}}
-function listify(s){return (s||"").split(",").map(x=>x.trim()).filter(Boolean);}
+function listify(s){
+  if(!s) return [];
+  // แยกด้วยเครื่องหมายคอมมาหลายรูปแบบ และขึ้นบรรทัดใหม่
+  return String(s)
+    .split(/[,，、
+]+/)
+    .map(x=>x.trim())
+    .filter(Boolean);
+}
+
 function parseDate(s){if(!s) return 0;const t=s.trim().replace(" ","T");const d=new Date(t);return isNaN(d.getTime())?0:d.getTime();}
 function updateCurrentCat(){const cur=document.getElementById("cat").value||"";document.getElementById("currentCat").textContent=cur||"สินค้าทั้งหมด";}
 function pickBuyLink(item) {
