@@ -122,6 +122,80 @@ function initLightbox(){lb.root=document.getElementById("lightbox");lb.main=docu
 function render(items){const grid=document.getElementById("grid");const empty=document.getElementById("empty");grid.innerHTML="";if(!items.length){empty.style.display="block";return;}empty.style.display="none";items.forEach(item=>{if((item["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="hidden")return;const imgs=[item["ลิงก์รูปภาพหลัก"],...listify(item["ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)"])].filter(Boolean);const cover=imgs[0]||"";const price=item["ราคา (THB)"]?fmt(item["ราคา (THB)"])+" บาท":"สอบถามราคา";const buy=pickBuyLink(item);const status=(item["สถานะประกาศ (active|hidden|sold)"]||"active").toLowerCase();const badgeList=[];if(item["จำนวนคงเหลือ"])badgeList.push("คงเหลือ "+item["จำนวนคงเหลือ"]);if(item["รับประกัน (วัน)"])badgeList.push("ประกัน "+item["รับประกัน (วัน)"]+" วัน");if(item["ชิป/ซีรีส์ (ถ้าเป็นการ์ดจอให้ใส่เช่น RTX 3060 Ti / RX 6700 XT)"])badgeList.push(item["ชิป/ซีรีส์ (ถ้าเป็นการ์ดจอให้ใส่เช่น RTX 3060 Ti / RX 6700 XT)"]);const card=document.createElement("div");card.className="card";card.innerHTML=`${cover?`<img class="thumb" src="${cover}" alt="">`:`<div class="thumb"></div>`}${status==="sold"?`<div class="ribbon">SOLD OUT</div>`:""}${isNewItem(item)?`<div class="newtag">NEW</div>`:""}<div class="ct"><div class="title">${item["ชื่อสินค้า"]||item["รุ่นย่อย"]||item["SKU"]||"สินค้าไม่ระบุชื่อ"}</div><div class="muted">${item["ยี่ห้อ/แบรนด์"]||""} ${item["รุ่นย่อย"]?("• "+item["รุ่นย่อย"]):""}</div><div class="price">${price}</div><div class="badges">${badgeList.map(b=>`<span class="badge">${b}</span>`).join(" ")}</div><div class="row" style="gap:10px"><a class="buybtn" href="${buy}" target="_blank" rel="noopener" onclick="event.stopPropagation()">สั่งซื้อ<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 12.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg></a></div></div>`;card.addEventListener("click",()=>lb.open(item));grid.appendChild(card);});}
 async function boot(){initLightbox();const q=document.getElementById("q");const cat=document.getElementById("cat");const status=document.getElementById("status");async function loadData(){let url=CONFIG.csvPath;if(CONFIG.mode==="gsheet"&&CONFIG.gsheetCsvUrl)url=CONFIG.gsheetCsvUrl;const res=await fetch(url+(url.includes("?")?"&":"?")+"v="+Date.now());const text=await res.text();return csvToArray(text);}function apply(list){const qv=q.value.trim();const cv=cat.value.trim();const sv=status.value.trim();let items=[...list];if(qv)items=items.filter(it=>{const hay=[it["ชื่อสินค้า"],it["ยี่ห้อ/แบรนด์"],it["รุ่นย่อย"],it["หมวดหมู่"],it["แท็ก (คั่นด้วย ,)"],it["SKU"]].join(" ").toLowerCase();return hay.includes(qv.toLowerCase());});if(cv)items=items.filter(it=>(it["หมวดหมู่"]||"")===cv);if(sv)items=items.filter(it=>(it["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()===sv);items.sort((a,b)=>{const sa=((a["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold")?1:0;const sb=((b["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold")?1:0;if(sa!==sb)return sa-sb;const da=parseDate(a["อัปเดตล่าสุด (YYYY-MM-DD HH:MM)"])||parseDate(a["วันที่รับของ (YYYY-MM-DD)"]);const db=parseDate(b["อัปเดตล่าสุด (YYYY-MM-DD HH:MM)"])||parseDate(b["วันที่รับของ (YYYY-MM-DD)"]);if(da!==db)return db-da;const pa=Number(a["ราคา (THB)"]||0);const pb=Number(b["ราคา (THB)"]||0);return pb-pa;});render(items);}const data=await loadData();apply(data);q.addEventListener("input",()=>apply(data));cat.addEventListener("change",()=>{updateCurrentCat();apply(data);});status.addEventListener("change",()=>apply(data));updateCurrentCat();}
 boot();
+<script>
+/* === PATCH: ทำให้ popup แสดงหลายรูปจากคอลัมน์ "ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)" ===
+   ใช้กับไฟล์ index เดิมของเอิร์ธโดยไม่แตะ layout/สไตล์
+   - ถ้ารูปเป็นชื่อไฟล์ (เช่น psu12.jpg) จะเติม "images/" ให้อัตโนมัติ
+   - ถ้าเป็น URL เต็ม (https://...) จะใช้ตามนั้น
+*/
+(function(){
+  function normalizeImagePath(u){
+    if(!u) return "";
+    u = String(u).trim().replace(/^["']|["']$/g, "");
+    if (/^https?:\/\//i.test(u)) return u;            // URL เต็ม
+    if (u.startsWith("images/")) return u;            // มีโฟลเดอร์แล้ว
+    return "images/" + u;                             // เป็นชื่อไฟล์ -> เติม images/
+  }
+  function listify(s){
+    if(!s) return [];
+    const raw = String(s).trim().replace(/^["']|["']$/g, "");
+    return raw.split(/[,，、\n]+/).map(x=>x.trim()).filter(Boolean);
+  }
+
+  // ชื่อคอลัมน์ตาม CSV ที่ใช้อยู่
+  const COL_MAIN = "ลิงก์รูปภาพหลัก";
+  const COL_MORE = "ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)";
+  const ALT_MORE = "ลิงก์รูปภาพเพิ่มเติม"; // เผื่อไฟล์เก่า
+
+  // ถ้าไฟล์เดิมมีตัวแปร lb อยู่แล้ว ให้ override เฉพาะ open()
+  const _lb = window.lb || (window.lb = {});
+  _lb.open = function(item){
+    // สร้างอาร์เรย์รูปทั้งหมด: รูปหลัก + รูปเพิ่มเติม
+    const moreRaw = item[COL_MORE] || item[ALT_MORE] || "";
+    const gallery = listify(moreRaw).map(normalizeImagePath);
+    const main = normalizeImagePath(item[COL_MAIN]);
+    const imgs = [main, ...gallery].filter(Boolean);
+
+    // อ้างอิงองค์ประกอบเดิมในหน้า
+    const root    = document.getElementById("lightbox");
+    const mainImg = document.getElementById("lb-mainimg");
+    const thumbs  = document.getElementById("lb-thumbs");
+    const title   = document.getElementById("lb-title");
+    const spec    = document.getElementById("lb-spec");
+    const desc    = document.getElementById("lb-desc");
+
+    if (title) title.textContent = item["ชื่อสินค้า"] || item["รุ่นย่อย"] || item["SKU"] || "";
+    if (mainImg) mainImg.src = imgs[0] || "";
+
+    if (thumbs){
+      thumbs.innerHTML = "";
+      imgs.forEach((u,i)=>{
+        const im = document.createElement("img");
+        im.src = u; im.alt = "img"+i;
+        im.addEventListener("click", ()=>{ if(mainImg) mainImg.src = u; });
+        thumbs.appendChild(im);
+      });
+    }
+
+    if (spec){
+      const bits = [];
+      if (item["ราคา (THB)"]) bits.push(`<div><b>ราคา:</b> ${Number(item["ราคา (THB)"]).toLocaleString('th-TH')} บาท</div>`);
+      if (item["รับประกัน (วัน)"]) bits.push(`<div><b>ประกัน:</b> ${item["รับประกัน (วัน)"]} วัน</div>`);
+      spec.innerHTML = bits.join("");
+    }
+    if (desc) desc.textContent = item["รายละเอียดเพิ่มเติม"] || "";
+
+    if (root) root.classList.add("open");
+  };
+
+  // ปิด popup (คงพฤติกรรมเดิม)
+  document.getElementById("lb-close")?.addEventListener("click", ()=>{
+    document.getElementById("lightbox")?.classList.remove("open");
+  });
+  document.getElementById("lightbox")?.addEventListener("click", (e)=>{
+    if (e.target === e.currentTarget) e.currentTarget.classList.remove("open");
+  });
+})();
 </script>
 </body>
 </html>
