@@ -139,6 +139,76 @@ document.getElementById("lightbox").onclick=e=>{if(e.target.id==="lightbox")e.cu
   const data=await loadCSV();
   render(data);
 })();
+<script>
+/* === PATCH: popup ให้รองรับรูปหลายรูปจาก CSV (เวอร์ชันตรงกับ header ที่ส่งมา) === */
+(function () {
+  // ชื่อคอลัมน์ตามไฟล์ CSV ของเอิร์ธ
+  const COL_MAIN = "ลิงก์รูปภาพหลัก";
+  const COL_MORE = "ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)";
+
+  function normalizeImagePath(u) {
+    if (!u) return "";
+    u = String(u).trim().replace(/^["']|["']$/g, "");
+    if (/^https?:\/\//i.test(u)) return u;       // URL เต็ม
+    if (u.startsWith("images/")) return u;       // มีโฟลเดอร์แล้ว
+    return "images/" + u;                        // เป็นชื่อไฟล์ -> เติม images/
+  }
+
+  function listify(s) {
+    if (!s) return [];
+    // รองรับคั่นด้วย , 、 หรือ ขึ้นบรรทัดใหม่ + ตัดเว้นวรรค/quote
+    const raw = String(s).trim().replace(/^["']|["']$/g, "");
+    return raw.split(/[,，、\n]+/).map(x => x.trim()).filter(Boolean);
+  }
+
+  // ถ้ามีตัวแปร lb อยู่แล้ว ให้ override เฉพาะ open()
+  const _lb = window.lb || (window.lb = {});
+  _lb.open = function (item) {
+    const main = normalizeImagePath(item[COL_MAIN]);
+    const gallery = listify(item[COL_MORE]).map(normalizeImagePath);
+    const imgs = [main, ...gallery].filter(Boolean);
+
+    // DOM เดิมในหน้า
+    const root    = document.getElementById("lightbox");
+    const mainImg = document.getElementById("lb-mainimg");
+    const thumbs  = document.getElementById("lb-thumbs");
+    const title   = document.getElementById("lb-title");
+    const spec    = document.getElementById("lb-spec");
+    const desc    = document.getElementById("lb-desc");
+
+    if (title) title.textContent = item["ชื่อสินค้า"] || item["รุ่นย่อย"] || item["SKU"] || "";
+    if (mainImg) mainImg.src = imgs[0] || "";
+
+    if (thumbs) {
+      thumbs.innerHTML = "";
+      imgs.forEach((u, i) => {
+        const im = document.createElement("img");
+        im.src = u; im.alt = "img" + i;
+        im.addEventListener("click", () => { if (mainImg) mainImg.src = u; });
+        thumbs.appendChild(im);
+      });
+    }
+
+    // สเปก/ราคา (ปรับได้ตามของเดิมในหน้า)
+    if (spec) {
+      const bits = [];
+      if (item["ราคา (THB)"]) bits.push(`<div><b>ราคา:</b> ${Number(item["ราคา (THB)"]).toLocaleString('th-TH')} บาท</div>`);
+      if (item["รับประกัน (วัน)"]) bits.push(`<div><b>ประกัน:</b> ${item["รับประกัน (วัน)"]} วัน</div>`);
+      spec.innerHTML = bits.join("");
+    }
+    if (desc) desc.textContent = item["รายละเอียดเพิ่มเติม"] || "";
+
+    if (root) root.classList.add("open");
+  };
+
+  // ปิด popup (คงพฤติกรรมเดิม)
+  document.getElementById("lb-close")?.addEventListener("click", () => {
+    document.getElementById("lightbox")?.classList.remove("open");
+  });
+  document.getElementById("lightbox")?.addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) e.currentTarget.classList.remove("open");
+  });
+})();
 </script>
 </body>
 </html>
