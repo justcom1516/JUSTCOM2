@@ -1,70 +1,75 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>JUST COM</title>
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet" />
 <style>
 :root{
-  --bg:#0b0e11;--panel:#0f1319;--card:#12161d;--muted:#9aa4b2;--text:#e7edf3;--line:#1c2430;--accent:#1f6feb;
-  --radius:12px; --gap:12px; --maxw:1200px;
+  --bg:#0b0e11;--panel:#0f1319;--card:#12161d;--line:#1c2430;
+  --text:#e7edf3;--muted:#9aa4b2;--accent:#1f6feb;
+  --radius:14px;--gap:14px;--maxw:1200px;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--text);font-family:'Prompt',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif}
-a{color:inherit;text-decoration:none}
 
-header{position:sticky;top:0;z-index:10;background:rgba(15,17,20,.75);backdrop-filter:saturate(110%) blur(8px);border-bottom:1px solid var(--line)}
+/* header */
+header{position:sticky;top:0;z-index:10;background:rgba(11,14,17,.8);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--line)}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:10px 16px}
-.banner{width:100%;height:auto;border-bottom:1px solid var(--line);display:block}
+.banner{width:100%;height:auto;display:block;border-bottom:1px solid var(--line)}
 
-.container{max-width:var(--maxw);margin:12px auto;padding:0 16px}
-.row{display:flex;gap:var(--gap);flex-wrap:wrap;align-items:center}
-.grow{flex:1}
+/* layout */
+.container{max-width:var(--maxw);margin:14px auto;padding:0 16px}
+.controls{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+input,select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px 12px;outline:none}
+input{flex:1}
 
-input,select{width:100%;padding:10px 12px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:var(--radius);outline:none}
-.grid{margin:18px auto 80px;padding:0 10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;position:relative;transition:transform .08s ease, box-shadow .08s ease}
-.card:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.25)}
-.thumb{background:#0b0e11;aspect-ratio:16/10;object-fit:cover;width:100%;display:block}
-.ct{padding:14px;display:flex;flex-direction:column;gap:10px}
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;transition:transform .08s ease, box-shadow .08s ease}
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(0,0,0,.22)}
+.thumb{width:100%;aspect-ratio:16/10;object-fit:cover;background:#0c1015}
+.ct{padding:12px;display:flex;flex-direction:column;gap:8px}
 .title{font-weight:800}
-.muted{opacity:.8;color:var(--muted);font-size:.92rem}
+.muted{color:var(--muted);font-size:.92rem}
 .price{font-weight:900}
-.badges{display:flex;flex-wrap:wrap;gap:6px}
-.badge{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#111;border:1px solid #111;padding:10px 12px;border-radius:999px;font-weight:900}
-.ribbon{position:absolute;top:12px;left:-36px;transform:rotate(-20deg);background:#b91c1c;color:#fff;padding:6px 56px;border:1px solid #444;font-weight:900;box-shadow: 6px 16px rgba(0,0,0,.4)}
-.newtag{position:absolute;top:12px;right:12px;background:#059669;color:#fff;padding:6px 10px;border-radius:10px;font-weight:900}
+.badges{display:flex;flex-wrap:wrap;gap:8px}
+.badge{display:inline-flex;align-items:center;background:#fff;color:#111;border:1px solid #111;border-radius:999px;padding:8px 12px;font-weight:800}
+.ribbon{position:absolute;top:12px;left:-36px;transform:rotate(-20deg);background:#b91c1c;color:#fff;padding:6px 56px;border:1px solid #444;font-weight:900;box-shadow:6px 16px rgba(0,0,0,.4)}
+.empty{opacity:.75;text-align:center;margin:40px 0}
 
-.empty{opacity:.7;text-align:center}
+/* lightbox */
+#lightbox{position:fixed;inset:0;background:rgba(0,0,0,.82);display:none;place-items:center;z-index:9999}
+#lightbox.open{display:grid}
+.lb{width:min(96vw,1100px);max-height:90vh;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:1fr 330px;position:relative}
+.lb-left{background:#0b0e11;border-right:1px solid var(--line);display:flex;flex-direction:column}
+.lb-main-wrap{padding:12px;display:flex;align-items:center;justify-content:center}
+#lb-main{width:100%;max-height:64vh;object-fit:contain;background:#000;border-radius:10px}
+#lb-thumbs{padding:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px;border-top:1px solid var(--line)}
+#lb-thumbs img{width:100%;height:82px;object-fit:cover;border:1px solid var(--line);border-radius:8px;cursor:pointer}
+.lb-right{padding:16px;overflow:auto}
+#lb-title{font-weight:900;font-size:18px;margin-bottom:8px}
+#lb-desc{margin-top:10px;color:var(--muted)}
+#lb-close{position:absolute;top:10px;right:10px;background:#111;border:1px solid #101b91;color:#fff;padding:6px 10px;border-radius:8px;cursor:pointer}
 
-#lightbox{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:1000}
-#lightbox.open{display:flex}
-.lb{max-width:min(96vw,1180px);max-height:90vh;background:#0b0e11;border:1px solid var(--line);border-radius:16px;overflow:hidden;color:var(--text);display:flex;gap:0}
-.lb-body{display:grid;grid-template-columns:1fr 320px;background:#000;border-right:1px solid var(--line)}
-.lb-main{display:flex;align-items:center;justify-content:center;background:#000;display:flex;align-items:center;justify-content:center}
-.lb-main img{width:100%;max-height:64vh;object-fit:contain}
-.lb-thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px;padding:12px;background:#0b0e11;border-right:1px solid var(--line)}
-.lb-thumbs img{width:100%;height:82px;object-fit:cover;border:1px solid var(--line);border-radius:8px;cursor:pointer}
-.lb-right{padding:16px 16px 24px 16px;min-width:0}
-.lb-title{font-weight:900;font-size:18px;margin-bottom:8px}
-.lb-close{position:absolute;top:12px;right:12px;background:#111;border:1px solid #101b91;color:#fff;padding:6px 10px;border-radius:8px;cursor:pointer}
-footer{text-align:center;color:var(--muted);font-size:13px;margin:12px;max-width:var(--maxw);margin-left:auto;margin-right:auto}
+footer{text-align:center;color:var(--muted);font-size:13px;margin:18px 0}
 </style>
 </head>
 <body>
 
 <header>
-  <img class="banner" src="images/banner.png" alt="Banner">
+  <!-- ใช้ได้ทั้ง banner.png หรือรูปอื่น แค่เปลี่ยนชื่อไฟล์ -->
+  <div class="wrap">
+    <img class="banner" src="images/banner.png" alt="Banner" />
+  </div>
 </header>
 
 <div class="container">
-  <div class="row">
-    <div class="grow"><h2 style="margin:8px 0 0 0;">JUST COM</h2></div>
-  </div>
-  <div class="row" style="margin-top:10px">
-    <input id="q" placeholder="ค้นหา: ชื่อ/แบรนด์/รุ่น…">
+  <h2 style="margin:4px 0 0 0">JUST COM</h2>
+  <div class="controls">
+    <input id="q" placeholder="ค้นหา: ชื่อ/แบรนด์/รุ่น…" />
   </div>
 
   <div id="grid" class="grid"></div>
@@ -76,26 +81,26 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin:12px;max-width
 <!-- Lightbox -->
 <div id="lightbox" aria-hidden="true">
   <div class="lb">
-    <button id="lb-close" class="lb-close">ปิด ✕</button>
-    <div class="lb-body">
-      <div class="lb-thumbs" id="lb-thumbs"></div>
-      <div class="lb-main"><img id="lb-mainimg" alt=""></div>
+    <button id="lb-close">ปิด ✕</button>
+    <div class="lb-left">
+      <div class="lb-main-wrap"><img id="lb-main" alt=""></div>
+      <div id="lb-thumbs"></div>
     </div>
     <div class="lb-right">
-      <div class="lb-title" id="lb-title"></div>
+      <div id="lb-title"></div>
       <div id="lb-spec"></div>
-      <div id="lb-desc" style="margin-top:10px;color:#9aa4b2"></div>
+      <div id="lb-desc"></div>
     </div>
   </div>
 </div>
 
 <script>
-/* ----------------------- CONFIG ----------------------- */
+/* -------------------- CONFIG -------------------- */
 const CONFIG = {
-  csvPath: "data/justcom_inventory.csv", // อยู่ในโฟลเดอร์ data/
+  csvPath: "data/justcom_inventory.csv",
 };
 
-/* ----------------------- Utils ------------------------ */
+/* --------------------- Utils --------------------- */
 function csvToArray(str, delim = ","){
   const rows = str.split("\n").filter(x => x.trim().length);
   if(!rows.length) return [];
@@ -104,9 +109,9 @@ function csvToArray(str, delim = ","){
     const cols=[]; let cur="", inQ=false;
     for(let i=0;i<row.length;i++){
       const c=row[i];
-      if(c=='"'){ inQ = !inQ; }
+      if(c=='"'){ inQ=!inQ; }
       else if(c===delim && !inQ){ cols.push(cur); cur=""; }
-      else { cur += c; }
+      else{ cur+=c; }
     }
     cols.push(cur);
     const obj={};
@@ -120,40 +125,35 @@ function listify(s){
   return raw.split(/[,，、\n]+/).map(x=>x.trim()).filter(Boolean);
 }
 function fmt(n){try{return Number(n).toLocaleString('th-TH')}catch(e){return n}}
-function parseDate(s){if(!s) return 0; const t=s.trim().replace(" ","T"); const d=new Date(t); return isNaN(d.getTime())?0:d.getTime();}
+function parseDate(s){if(!s) return 0; const d=new Date(s.replace(" ","T")); return isNaN(d)?0:d.getTime();}
 
-/* ------------------- Lightbox object ------------------ */
+/* ------------------- Lightbox -------------------- */
 const lb = {
   root:null, main:null, thumbs:null, title:null, spec:null, desc:null,
   open(item){
-    // รูปเพิ่มเติมจากคอลัมน์ "ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)"
+    // รวมรูปหลัก + รูปเพิ่มเติม (รองรับ URL เต็ม/ชื่อไฟล์)
     const more = listify(item["ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)"]).map(u=>{
       if(/^https?:\/\//i.test(u)) return u;
       if(u.startsWith("images/")) return u;
       return "images/" + u;
     });
-    // รวมรูปหลัก + เพิ่มเติม
     const imgs = [ item["ลิงก์รูปภาพหลัก"], ...more ].filter(Boolean);
 
-    // ตั้งค่าหัวข้อ/สเปก
     this.title.textContent = item["ชื่อสินค้า"] || item["รุ่นย่อย"] || item["SKU"] || "";
     this.spec.innerHTML = [
       item["ยี่ห้อ/แบรนด์"] ? `<div><b>แบรนด์:</b> ${item["ยี่ห้อ/แบรนด์"]}</div>` : "",
-      item["รุ่นย่อย"] ? `<div><b>รุ่น:</b> ${item["รุ่นย่อย"]}</div>` : "",
+      item["รุ่นย่อย"]      ? `<div><b>รุ่น:</b> ${item["รุ่นย่อย"]}</div>` : "",
       item["รับประกัน (วัน)"] ? `<div><b>ประกัน:</b> ${item["รับประกัน (วัน)"]} วัน</div>` : "",
-      item["ราคา (THB)"] ? `<div><b>ราคา:</b> ${fmt(item["ราคา (THB)"])} บาท</div>` : ""
+      item["ราคา (THB)"]    ? `<div><b>ราคา:</b> ${fmt(item["ราคา (THB)"])} บาท</div>` : ""
     ].filter(Boolean).join("");
     this.desc.textContent = item["รายละเอียดเพิ่มเติม"] || "";
 
-    // main image
     this.main.src = imgs[0] || "";
-
-    // thumbnails
     this.thumbs.innerHTML = "";
     imgs.forEach((u,i)=>{
-      const im = document.createElement("img");
-      im.src = u; im.alt = "img"+i;
-      im.addEventListener("click", ()=> this.main.src = u);
+      const im=document.createElement("img");
+      im.src=u; im.alt="img"+i;
+      im.addEventListener("click",()=>this.main.src=u);
       this.thumbs.appendChild(im);
     });
 
@@ -162,17 +162,17 @@ const lb = {
   close(){ this.root.classList.remove("open"); }
 };
 function initLightbox(){
-  lb.root  = document.getElementById("lightbox");
-  lb.main  = document.getElementById("lb-mainimg");
-  lb.thumbs= document.getElementById("lb-thumbs");
-  lb.title = document.getElementById("lb-title");
-  lb.spec  = document.getElementById("lb-spec");
-  lb.desc  = document.getElementById("lb-desc");
+  lb.root   = document.getElementById("lightbox");
+  lb.main   = document.getElementById("lb-main");
+  lb.thumbs = document.getElementById("lb-thumbs");
+  lb.title  = document.getElementById("lb-title");
+  lb.spec   = document.getElementById("lb-spec");
+  lb.desc   = document.getElementById("lb-desc");
   document.getElementById("lb-close").addEventListener("click",()=>lb.close());
   lb.root.addEventListener("click",(e)=>{ if(e.target===lb.root) lb.close(); });
 }
 
-/* -------------------- UI Rendering -------------------- */
+/* ------------------- Rendering ------------------- */
 function render(items){
   const grid=document.getElementById("grid");
   const empty=document.getElementById("empty");
@@ -189,48 +189,44 @@ function render(items){
     if(item["จำนวนคงเหลือ"]) badges.push(`คงเหลือ ${item["จำนวนคงเหลือ"]}`);
     if(item["รับประกัน (วัน)"]) badges.push(`ประกัน ${item["รับประกัน (วัน)"]} วัน`);
 
-    const card=document.createElement("div");
-    card.className="card";
-    card.innerHTML = `
+    const el=document.createElement("div");
+    el.className="card";
+    el.innerHTML=`
       ${status==="sold"?`<div class="ribbon">SOLD OUT</div>`:""}
-      <img class="thumb" src="${cover||""}" alt="">
+      <img class="thumb" src="${cover||""}" alt="" />
       <div class="ct">
-        <div class="title">${item["ชื่อสินค้า"]||item["รุ่นย่อย"]||item["SKU"]||"ไม่ระบุชื่อ"}</div>
+        <div class="title">${item["ชื่อสินค้า"]||item["รุ่นย่อย"]||item["SKU"]||"สินค้าไม่ระบุชื่อ"}</div>
         <div class="muted">${item["ยี่ห้อ/แบรนด์"]||""} ${item["รุ่นย่อย"]?("• "+item["รุ่นย่อย"]):""}</div>
-        <div class="price">${item["ราคา (THB)"]?fmt(item["ราคา (THB)"])+" บาท":"สอบถามราคา"}</div>
+        <div class="price">${item["ราคา (THB)"]?fmt(item["ราคา (THB)"])+ " บาท":"สอบถามราคา"}</div>
         <div class="badges">${badges.map(b=>`<span class="badge">${b}</span>`).join("")}</div>
-      </div>
-    `;
-    card.addEventListener("click",()=>lb.open(item));
-    grid.appendChild(card);
+      </div>`;
+    el.addEventListener("click",()=>lb.open(item));
+    grid.appendChild(el);
   });
 }
 
-/* ---------------------- Boot -------------------------- */
+/* ---------------------- Boot ---------------------- */
 async function boot(){
   initLightbox();
 
-  // โหลด CSV
-  let url = CONFIG.csvPath;
-  const res = await fetch(url + (url.includes("?")?"&":"?") + "v=" + Date.now());
-  const text = await res.text();
-  const data = csvToArray(text);
+  const res=await fetch(CONFIG.csvPath + "?v=" + Date.now());
+  const text=await res.text();
+  const all=csvToArray(text);
 
-  // ค้นหา/กรอง
-  const q = document.getElementById("q");
+  const q=document.getElementById("q");
   function apply(list){
-    const qv = (q.value||"").trim().toLowerCase();
-    let items = [...list];
-    if(qv){
-      items = items.filter(it=>{
-        const hay = [
+    const kw=(q.value||"").trim().toLowerCase();
+    let items=[...list];
+    if(kw){
+      items=items.filter(it=>{
+        const hay=[
           it["ชื่อสินค้า"], it["ยี่ห้อ/แบรนด์"], it["รุ่นย่อย"],
           it["หมวดหมู่"], it["แท็ก (คั่นด้วย ,)"], it["SKU"]
         ].join(" ").toLowerCase();
-        return hay.includes(qv);
+        return hay.includes(kw);
       });
     }
-    // เรียง: active ก่อน sold, แล้วตามอัปเดตล่าสุด, ราคา
+    // active มาก่อน sold, แล้วค่อยอัปเดตล่าสุด > ราคา
     items.sort((a,b)=>{
       const sa=((a["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold")?1:0;
       const sb=((b["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold")?1:0;
@@ -238,14 +234,12 @@ async function boot(){
       const da=parseDate(a["อัปเดตล่าสุด (YYYY-MM-DD HH:MM)"])||parseDate(a["วันที่รับของ (YYYY-MM-DD)"]);
       const db=parseDate(b["อัปเดตล่าสุด (YYYY-MM-DD HH:MM)"])||parseDate(b["วันที่รับของ (YYYY-MM-DD)"]);
       if(da!==db) return db-da;
-      const pa=Number(a["ราคา (THB)"]||0), pb=Number(b["ราคา (THB)"]||0);
-      return pb-pa;
+      return Number(b["ราคา (THB)"]||0)-Number(a["ราคา (THB)"]||0);
     });
     render(items);
   }
-
-  apply(data);
-  q.addEventListener("input",()=>apply(data));
+  apply(all);
+  q.addEventListener("input",()=>apply(all));
 }
 boot();
 </script>
