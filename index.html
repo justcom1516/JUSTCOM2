@@ -1,46 +1,32 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>JUST COM</title>
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0b0e11;--panel:#0f1319;--card:#12161d;--line:#1c2430;
-  --text:#e7edf3;--muted:#9aa4b2;--accent:#1f6feb;
-  --radius:14px;--gap:14px;--maxw:1200px;
+ --bg:#0b0e11;--panel:#0f1319;--card:#12161d;--line:#1c2430;
+ --text:#e7edf3;--muted:#9aa4b2;--accent:#1f6feb;
+ --radius:14px;--gap:14px;--maxw:1200px;
 }
-*{box-sizing:border-box}
-html,body{height:100%}
+*{box-sizing:border-box}html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--text);font-family:'Prompt',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif}
-
-/* header */
 header{position:sticky;top:0;z-index:10;background:rgba(11,14,17,.8);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--line)}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:10px 16px}
 .banner{width:100%;height:auto;display:block;border-bottom:1px solid var(--line)}
-
-/* layout */
 .container{max-width:var(--maxw);margin:14px auto;padding:0 16px}
-.controls{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
-input,select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px 12px;outline:none}
-input{flex:1}
-
-/* grid */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:16px}
+input{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%;outline:none;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:10px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;transition:transform .08s ease, box-shadow .08s ease}
 .card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(0,0,0,.22)}
 .thumb{width:100%;aspect-ratio:16/10;object-fit:cover;background:#0c1015}
 .ct{padding:12px;display:flex;flex-direction:column;gap:8px}
-.title{font-weight:800}
-.muted{color:var(--muted);font-size:.92rem}
-.price{font-weight:900}
-.badges{display:flex;flex-wrap:wrap;gap:8px}
-.badge{display:inline-flex;align-items:center;background:#fff;color:#111;border:1px solid #111;border-radius:999px;padding:8px 12px;font-weight:800}
+.title{font-weight:800}.muted{color:var(--muted);font-size:.92rem}.price{font-weight:900}
+.badges{display:flex;flex-wrap:wrap;gap:8px}.badge{display:inline-flex;align-items:center;background:#fff;color:#111;border:1px solid #111;border-radius:999px;padding:6px 10px;font-weight:800}
 .ribbon{position:absolute;top:12px;left:-36px;transform:rotate(-20deg);background:#b91c1c;color:#fff;padding:6px 56px;border:1px solid #444;font-weight:900;box-shadow:6px 16px rgba(0,0,0,.4)}
 .empty{opacity:.75;text-align:center;margin:40px 0}
-
-/* lightbox */
 #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.82);display:none;place-items:center;z-index:9999}
 #lightbox.open{display:grid}
 .lb{width:min(96vw,1100px);max-height:90vh;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:1fr 330px;position:relative}
@@ -53,32 +39,22 @@ input{flex:1}
 #lb-title{font-weight:900;font-size:18px;margin-bottom:8px}
 #lb-desc{margin-top:10px;color:var(--muted)}
 #lb-close{position:absolute;top:10px;right:10px;background:#111;border:1px solid #101b91;color:#fff;padding:6px 10px;border-radius:8px;cursor:pointer}
-
 footer{text-align:center;color:var(--muted);font-size:13px;margin:18px 0}
 </style>
 </head>
 <body>
 
-<header>
-  <!-- ใช้ได้ทั้ง banner.png หรือรูปอื่น แค่เปลี่ยนชื่อไฟล์ -->
-  <div class="wrap">
-    <img class="banner" src="images/banner.png" alt="Banner" />
-  </div>
-</header>
+<header><div class="wrap"><img class="banner" src="images/banner.png" alt="Banner"></div></header>
 
 <div class="container">
-  <h2 style="margin:4px 0 0 0">JUST COM</h2>
-  <div class="controls">
-    <input id="q" placeholder="ค้นหา: ชื่อ/แบรนด์/รุ่น…" />
-  </div>
-
-  <div id="grid" class="grid"></div>
-  <div id="empty" class="empty" style="display:none">ไม่พบสินค้าใน CSV</div>
+<h2>JUST COM</h2>
+<input id="q" placeholder="ค้นหา: ชื่อ/แบรนด์/รุ่น...">
+<div id="grid" class="grid"></div>
+<div id="empty" class="empty" style="display:none">ไม่พบสินค้าใน CSV</div>
 </div>
 
 <footer>© Copyright 2025 All Rights Reserved By Just Com.</footer>
 
-<!-- Lightbox -->
 <div id="lightbox" aria-hidden="true">
   <div class="lb">
     <button id="lb-close">ปิด ✕</button>
@@ -95,152 +71,31 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin:18px 0}
 </div>
 
 <script>
-/* -------------------- CONFIG -------------------- */
-const CONFIG = {
-  csvPath: "data/justcom_inventory.csv",
-};
-
-/* --------------------- Utils --------------------- */
-function csvToArray(str, delim = ","){
-  const rows = str.split("\n").filter(x => x.trim().length);
-  if(!rows.length) return [];
-  const headers = rows.shift().split(delim).map(h => h.trim());
-  return rows.map(row=>{
-    const cols=[]; let cur="", inQ=false;
-    for(let i=0;i<row.length;i++){
-      const c=row[i];
-      if(c=='"'){ inQ=!inQ; }
-      else if(c===delim && !inQ){ cols.push(cur); cur=""; }
-      else{ cur+=c; }
-    }
-    cols.push(cur);
-    const obj={};
-    headers.forEach((h,i)=>obj[h]=(cols[i]??"").trim());
-    return obj;
-  });
-}
-function listify(s){
-  if(!s) return [];
-  const raw = String(s).trim().replace(/^["']|["']$/g, "");
-  return raw.split(/[,，、\n]+/).map(x=>x.trim()).filter(Boolean);
-}
+const CONFIG={csvPath:"data/justcom_inventory.csv"};
+function csvToArray(str,delim=","){const rows=str.split("\n").filter(x=>x.trim().length);if(!rows.length)return[];const headers=rows.shift().split(delim).map(h=>h.trim());return rows.map(row=>{const cols=[];let cur="",inQ=false;for(let i=0;i<row.length;i++){const c=row[i];if(c=='"'){inQ=!inQ;}else if(c===delim&&!inQ){cols.push(cur);cur="";}else{cur+=c;}}cols.push(cur);const obj={};headers.forEach((h,i)=>obj[h]=(cols[i]??"").trim());return obj;});}
+function listify(s){if(!s)return[];return String(s).replace(/\r/g,"").split(/[,，、\n]+/).map(x=>x.trim()).filter(Boolean);}
 function fmt(n){try{return Number(n).toLocaleString('th-TH')}catch(e){return n}}
-function parseDate(s){if(!s) return 0; const d=new Date(s.replace(" ","T")); return isNaN(d)?0:d.getTime();}
-
-/* ------------------- Lightbox -------------------- */
-const lb = {
-  root:null, main:null, thumbs:null, title:null, spec:null, desc:null,
-  open(item){
-    // รวมรูปหลัก + รูปเพิ่มเติม (รองรับ URL เต็ม/ชื่อไฟล์)
-    const more = listify(item["ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)"]).map(u=>{
-      if(/^https?:\/\//i.test(u)) return u;
-      if(u.startsWith("images/")) return u;
-      return "images/" + u;
-    });
-    const imgs = [ item["ลิงก์รูปภาพหลัก"], ...more ].filter(Boolean);
-
-    this.title.textContent = item["ชื่อสินค้า"] || item["รุ่นย่อย"] || item["SKU"] || "";
-    this.spec.innerHTML = [
-      item["ยี่ห้อ/แบรนด์"] ? `<div><b>แบรนด์:</b> ${item["ยี่ห้อ/แบรนด์"]}</div>` : "",
-      item["รุ่นย่อย"]      ? `<div><b>รุ่น:</b> ${item["รุ่นย่อย"]}</div>` : "",
-      item["รับประกัน (วัน)"] ? `<div><b>ประกัน:</b> ${item["รับประกัน (วัน)"]} วัน</div>` : "",
-      item["ราคา (THB)"]    ? `<div><b>ราคา:</b> ${fmt(item["ราคา (THB)"])} บาท</div>` : ""
-    ].filter(Boolean).join("");
-    this.desc.textContent = item["รายละเอียดเพิ่มเติม"] || "";
-
-    this.main.src = imgs[0] || "";
-    this.thumbs.innerHTML = "";
-    imgs.forEach((u,i)=>{
-      const im=document.createElement("img");
-      im.src=u; im.alt="img"+i;
-      im.addEventListener("click",()=>this.main.src=u);
-      this.thumbs.appendChild(im);
-    });
-
-    this.root.classList.add("open");
-  },
-  close(){ this.root.classList.remove("open"); }
-};
-function initLightbox(){
-  lb.root   = document.getElementById("lightbox");
-  lb.main   = document.getElementById("lb-main");
-  lb.thumbs = document.getElementById("lb-thumbs");
-  lb.title  = document.getElementById("lb-title");
-  lb.spec   = document.getElementById("lb-spec");
-  lb.desc   = document.getElementById("lb-desc");
-  document.getElementById("lb-close").addEventListener("click",()=>lb.close());
-  lb.root.addEventListener("click",(e)=>{ if(e.target===lb.root) lb.close(); });
-}
-
-/* ------------------- Rendering ------------------- */
-function render(items){
-  const grid=document.getElementById("grid");
-  const empty=document.getElementById("empty");
-  grid.innerHTML="";
-  if(!items.length){ empty.style.display="block"; return; }
-  empty.style.display="none";
-
-  items.forEach(item=>{
-    if((item["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="hidden") return;
-
-    const cover=item["ลิงก์รูปภาพหลัก"];
-    const status=(item["สถานะประกาศ (active|hidden|sold)"]||"active").toLowerCase();
-    const badges=[];
-    if(item["จำนวนคงเหลือ"]) badges.push(`คงเหลือ ${item["จำนวนคงเหลือ"]}`);
-    if(item["รับประกัน (วัน)"]) badges.push(`ประกัน ${item["รับประกัน (วัน)"]} วัน`);
-
-    const el=document.createElement("div");
-    el.className="card";
-    el.innerHTML=`
-      ${status==="sold"?`<div class="ribbon">SOLD OUT</div>`:""}
-      <img class="thumb" src="${cover||""}" alt="" />
-      <div class="ct">
-        <div class="title">${item["ชื่อสินค้า"]||item["รุ่นย่อย"]||item["SKU"]||"สินค้าไม่ระบุชื่อ"}</div>
-        <div class="muted">${item["ยี่ห้อ/แบรนด์"]||""} ${item["รุ่นย่อย"]?("• "+item["รุ่นย่อย"]):""}</div>
-        <div class="price">${item["ราคา (THB)"]?fmt(item["ราคา (THB)"])+ " บาท":"สอบถามราคา"}</div>
-        <div class="badges">${badges.map(b=>`<span class="badge">${b}</span>`).join("")}</div>
-      </div>`;
-    el.addEventListener("click",()=>lb.open(item));
-    grid.appendChild(el);
-  });
-}
-
-/* ---------------------- Boot ---------------------- */
-async function boot(){
-  initLightbox();
-
-  const res=await fetch(CONFIG.csvPath + "?v=" + Date.now());
-  const text=await res.text();
-  const all=csvToArray(text);
-
-  const q=document.getElementById("q");
-  function apply(list){
-    const kw=(q.value||"").trim().toLowerCase();
-    let items=[...list];
-    if(kw){
-      items=items.filter(it=>{
-        const hay=[
-          it["ชื่อสินค้า"], it["ยี่ห้อ/แบรนด์"], it["รุ่นย่อย"],
-          it["หมวดหมู่"], it["แท็ก (คั่นด้วย ,)"], it["SKU"]
-        ].join(" ").toLowerCase();
-        return hay.includes(kw);
-      });
-    }
-    // active มาก่อน sold, แล้วค่อยอัปเดตล่าสุด > ราคา
-    items.sort((a,b)=>{
-      const sa=((a["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold")?1:0;
-      const sb=((b["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold")?1:0;
-      if(sa!==sb) return sa-sb;
-      const da=parseDate(a["อัปเดตล่าสุด (YYYY-MM-DD HH:MM)"])||parseDate(a["วันที่รับของ (YYYY-MM-DD)"]);
-      const db=parseDate(b["อัปเดตล่าสุด (YYYY-MM-DD HH:MM)"])||parseDate(b["วันที่รับของ (YYYY-MM-DD)"]);
-      if(da!==db) return db-da;
-      return Number(b["ราคา (THB)"]||0)-Number(a["ราคา (THB)"]||0);
-    });
-    render(items);
-  }
-  apply(all);
-  q.addEventListener("input",()=>apply(all));
-}
+function parseDate(s){if(!s)return 0;const d=new Date(s.replace(" ","T"));return isNaN(d)?0:d.getTime();}
+const lb={root:null,main:null,thumbs:null,title:null,spec:null,desc:null,
+open(item){const more=listify(item["ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)"]).map(u=>/^https?:\/\//i.test(u)?u:(u.startsWith("images/")?u:"images/"+u));const imgs=[item["ลิงก์รูปภาพหลัก"],...more].filter(Boolean);
+this.title.textContent=item["ชื่อสินค้า"]||item["รุ่นย่อย"]||item["SKU"]||"";
+this.spec.innerHTML=[item["ยี่ห้อ/แบรนด์"]?`<div><b>แบรนด์:</b> ${item["ยี่ห้อ/แบรนด์"]}</div>`:"",item["รุ่นย่อย"]?`<div><b>รุ่น:</b> ${item["รุ่นย่อย"]}</div>`:"",item["รับประกัน (วัน)"]?`<div><b>ประกัน:</b> ${item["รับประกัน (วัน)"]} วัน</div>`:"",item["ราคา (THB)"]?`<div><b>ราคา:</b> ${fmt(item["ราคา (THB)"])} บาท</div>`:""].filter(Boolean).join("");
+this.desc.textContent=item["รายละเอียดเพิ่มเติม"]||"";
+this.main.src=imgs[0]||"";this.thumbs.innerHTML="";
+imgs.forEach((u,i)=>{const im=document.createElement("img");im.src=u;im.alt="img"+i;im.addEventListener("click",()=>this.main.src=u);this.thumbs.appendChild(im);});
+this.root.classList.add("open");},
+close(){this.root.classList.remove("open");}};
+function initLightbox(){lb.root=document.getElementById("lightbox");lb.main=document.getElementById("lb-main");lb.thumbs=document.getElementById("lb-thumbs");lb.title=document.getElementById("lb-title");lb.spec=document.getElementById("lb-spec");lb.desc=document.getElementById("lb-desc");document.getElementById("lb-close").addEventListener("click",()=>lb.close());lb.root.addEventListener("click",e=>{if(e.target===lb.root)lb.close();});}
+function render(items){const grid=document.getElementById("grid"),empty=document.getElementById("empty");grid.innerHTML="";if(!items.length){empty.style.display="block";return;}empty.style.display="none";
+items.forEach(item=>{if((item["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="hidden")return;const cover=item["ลิงก์รูปภาพหลัก"],status=(item["สถานะประกาศ (active|hidden|sold)"]||"active").toLowerCase();const badges=[];if(item["จำนวนคงเหลือ"])badges.push(`คงเหลือ ${item["จำนวนคงเหลือ"]}`);if(item["รับประกัน (วัน)"])badges.push(`ประกัน ${item["รับประกัน (วัน)"]} วัน`);
+const el=document.createElement("div");el.className="card";el.innerHTML=`${status==="sold"?`<div class="ribbon">SOLD OUT</div>`:""}<img class="thumb" src="${cover||""}" alt=""><div class="ct"><div class="title">${item["ชื่อสินค้า"]||item["รุ่นย่อย"]||item["SKU"]||"สินค้าไม่ระบุชื่อ"}</div><div class="muted">${item["ยี่ห้อ/แบรนด์"]||""} ${item["รุ่นย่อย"]?("• "+item["รุ่นย่อย"]):""}</div><div class="price">${item["ราคา (THB)"]?fmt(item["ราคา (THB)"])+" บาท":"สอบถามราคา"}</div><div class="badges">${badges.map(b=>`<span class="badge">${b}</span>`).join("")}</div></div>`;
+el.addEventListener("click",()=>lb.open(item));grid.appendChild(el);});}
+async function boot(){initLightbox();const res=await fetch(CONFIG.csvPath+"?v="+Date.now());const text=await res.text();const all=csvToArray(text);
+const q=document.getElementById("q");
+function apply(list){const kw=(q.value||"").trim().toLowerCase();let items=[...list];if(kw){items=items.filter(it=>[it["ชื่อสินค้า"],it["ยี่ห้อ/แบรนด์"],it["รุ่นย่อย"],it["หมวดหมู่"],it["แท็ก (คั่นด้วย ,)"],it["SKU"]].join(" ").toLowerCase().includes(kw));}
+items.sort((a,b)=>{const sa=((a["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold")?1:0;const sb=((b["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold")?1:0;if(sa!==sb)return sa-sb;const da=parseDate(a["อัปเดตล่าสุด (YYYY-MM-DD HH:MM)"])||parseDate(a["วันที่รับของ (YYYY-MM-DD)"]);const db=parseDate(b["อัปเดตล่าสุด (YYYY-MM-DD HH:MM)"])||parseDate(b["วันที่รับของ (YYYY-MM-DD)"]);if(da!==db)return db-da;return Number(b["ราคา (THB)"]||0)-Number(a["ราคา (THB)"]||0);});
+render(items);}
+apply(all);q.addEventListener("input",()=>apply(all));}
 boot();
 </script>
 </body>
