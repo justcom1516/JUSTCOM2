@@ -70,29 +70,107 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin:18px 0}
 
 <script>
 const CONFIG={csv:"data/justcom_inventory.csv"};
-function csvToArray(t,d=","){const r=t.split("\n").filter(x=>x.trim().length);if(!r.length)return[];const h=r.shift().split(d).map(x=>x.trim());return r.map(l=>{const c=[];let s="",q=!1;for(let i=0;i<l.length;i++){const ch=l[i];if(ch=='"')q=!q;else if(ch===d&&!q){c.push(s);s="";}else s+=ch;}c.push(s);const o={};h.forEach((k,i)=>o[k]=(c[i]??"").trim());return o;});}
-function listify(s){if(!s)return[];return String(s).replace(/\r/g,"").split(/[,，、\n]+/).map(x=>x.trim()).filter(Boolean);}
-const lb={root:null,main:null,thumbs:null,title:null,spec:null,desc:null,
- open(it){const imgs=[it["ลิงก์รูปภาพหลัก"],...listify(it["ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)"])].filter(Boolean).map(u=>/^https?:\/\//i.test(u)?u:(u.startsWith("images/")?u:"images/"+u));
- this.main.src=imgs[0]||"";this.thumbs.innerHTML="";
- imgs.forEach((u,i)=>{const im=document.createElement("img");im.src=u;im.alt="img"+i;im.addEventListener("click",()=>this.main.src=u);this.thumbs.appendChild(im);});
- this.title.textContent=it["ชื่อสินค้า"]||it["รุ่นย่อย"]||it["SKU"]||"";
- this.spec.innerHTML=`<div><b>แบรนด์:</b> ${it["ยี่ห้อ/แบรนด์"]||"-"}</div>
- <div><b>รุ่น:</b> ${it["รุ่นย่อย"]||"-"}</div>
- <div><b>ประกัน:</b> ${it["รับประกัน (วัน)"]||"-"} วัน</div>
- <div><b>ราคา:</b> ${it["ราคา (THB)"]||"-"} บาท</div>`;
- this.desc.textContent=it["รายละเอียดเพิ่มเติม"]||"";
- this.root.classList.add("open");},
- close(){this.root.classList.remove("open");}};
-function initLB(){lb.root=document.getElementById("lightbox");lb.main=document.getElementById("lb-main");lb.thumbs=document.getElementById("lb-thumbs");lb.title=document.getElementById("lb-title");lb.spec=document.getElementById("lb-spec");lb.desc=document.getElementById("lb-desc");document.getElementById("lb-close").addEventListener("click",()=>lb.close());lb.root.addEventListener("click",e=>{if(e.target===lb.root)lb.close();});}
-function render(items){const g=document.getElementById("grid"),e=document.getElementById("empty");g.innerHTML="";if(!items.length){e.style.display="block";return;}e.style.display="none";
- items.forEach(it=>{if((it["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="hidden")return;
- const el=document.createElement("div");el.className="card";el.innerHTML=`${(it["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold"?"<div class='ribbon'>SOLD OUT</div>":""}
- <img class='thumb' src='${it["ลิงก์รูปภาพหลัก"]||""}'><div class='ct'><div class='title'>${it["ชื่อสินค้า"]||it["รุ่นย่อย"]||"สินค้าไม่ระบุชื่อ"}</div><div class='muted'>${it["ยี่ห้อ/แบรนด์"]||""} ${it["รุ่นย่อย"]?"• "+it["รุ่นย่อย"]:""}</div><div class='price'>${it["ราคา (THB)"]||"สอบถาม"} บาท</div></div>`;
- el.addEventListener("click",()=>lb.open(it));g.appendChild(el);});}
-async function boot(){initLB();const t=await fetch(CONFIG.csv+"?v="+Date.now());const data=csvToArray(await t.text());const q=document.getElementById("q");
- const apply=()=>{const kw=q.value.toLowerCase();const f=data.filter(it=>[it["ชื่อสินค้า"],it["ยี่ห้อ/แบรนด์"],it["รุ่นย่อย"],it["หมวดหมู่"],it["แท็ก (คั่นด้วย ,)"],it["SKU"]].join(" ").toLowerCase().includes(kw));render(f);};
- q.addEventListener("input",apply);apply();}
+
+function csvToArray(str,delim=","){
+  const rows=str.split("\n").filter(x=>x.trim().length);
+  if(!rows.length) return [];
+  const headers=rows.shift().split(delim).map(h=>h.trim());
+  return rows.map(row=>{
+    const cols=[]; let cur="", inQ=false;
+    for(let i=0;i<row.length;i++){
+      const c=row[i];
+      if(c=='"') inQ=!inQ;
+      else if(c===delim && !inQ){ cols.push(cur); cur=""; }
+      else cur+=c;
+    }
+    cols.push(cur);
+    const obj={};
+    headers.forEach((h,i)=>obj[h]=(cols[i]??"").trim());
+    return obj;
+  });
+}
+
+// ✅ ฟังก์ชัน listify ใหม่ (ตัด quote, trim, แยก , หรือ \n ได้ทุกแบบ)
+function listify(s){
+  if(!s) return [];
+  return String(s)
+    .replace(/["']/g,"")   // ลบ " หรือ ' ทั้งหมด
+    .replace(/\r/g,"")
+    .split(/[,，、\n]+/)   // แยกด้วย comma หรือบรรทัดใหม่
+    .map(x=>x.trim())
+    .filter(Boolean);
+}
+
+const lb={
+  root:null,main:null,thumbs:null,title:null,spec:null,desc:null,
+  open(it){
+    const imgs=[
+      it["ลิงก์รูปภาพหลัก"],
+      ...listify(it["ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)"])
+    ].filter(Boolean).map(u=>/^https?:\/\//i.test(u)?u:(u.startsWith("images/")?u:"images/"+u));
+
+    this.main.src=imgs[0]||"";
+    this.thumbs.innerHTML="";
+    imgs.forEach((u,i)=>{
+      const im=document.createElement("img");
+      im.src=u;
+      im.alt="img"+i;
+      im.addEventListener("click",()=>this.main.src=u);
+      this.thumbs.appendChild(im);
+    });
+
+    this.title.textContent=it["ชื่อสินค้า"]||it["รุ่นย่อย"]||it["SKU"]||"";
+    this.spec.innerHTML=`<div><b>แบรนด์:</b> ${it["ยี่ห้อ/แบรนด์"]||"-"}</div>
+    <div><b>รุ่น:</b> ${it["รุ่นย่อย"]||"-"}</div>
+    <div><b>ประกัน:</b> ${it["รับประกัน (วัน)"]||"-"} วัน</div>
+    <div><b>ราคา:</b> ${it["ราคา (THB)"]||"-"} บาท</div>`;
+    this.desc.textContent=it["รายละเอียดเพิ่มเติม"]||"";
+    this.root.classList.add("open");
+  },
+  close(){ this.root.classList.remove("open"); }
+};
+
+function initLB(){
+  lb.root=document.getElementById("lightbox");
+  lb.main=document.getElementById("lb-main");
+  lb.thumbs=document.getElementById("lb-thumbs");
+  lb.title=document.getElementById("lb-title");
+  lb.spec=document.getElementById("lb-spec");
+  lb.desc=document.getElementById("lb-desc");
+  document.getElementById("lb-close").addEventListener("click",()=>lb.close());
+  lb.root.addEventListener("click",e=>{if(e.target===lb.root)lb.close();});
+}
+
+function render(items){
+  const g=document.getElementById("grid"), e=document.getElementById("empty");
+  g.innerHTML="";
+  if(!items.length){ e.style.display="block"; return; }
+  e.style.display="none";
+
+  items.forEach(it=>{
+    if((it["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="hidden")return;
+    const el=document.createElement("div");
+    el.className="card";
+    el.innerHTML=`${(it["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold"?"<div class='ribbon'>SOLD OUT</div>":""}
+    <img class='thumb' src='${it["ลิงก์รูปภาพหลัก"]||""}'><div class='ct'><div class='title'>${it["ชื่อสินค้า"]||it["รุ่นย่อย"]||"สินค้าไม่ระบุชื่อ"}</div><div class='muted'>${it["ยี่ห้อ/แบรนด์"]||""} ${it["รุ่นย่อย"]?"• "+it["รุ่นย่อย"]:""}</div><div class='price'>${it["ราคา (THB)"]||"สอบถาม"} บาท</div></div>`;
+    el.addEventListener("click",()=>lb.open(it));
+    g.appendChild(el);
+  });
+}
+
+async function boot(){
+  initLB();
+  const t=await fetch(CONFIG.csv+"?v="+Date.now());
+  const data=csvToArray(await t.text());
+  const q=document.getElementById("q");
+  const apply=()=>{
+    const kw=q.value.toLowerCase();
+    const f=data.filter(it=>[it["ชื่อสินค้า"],it["ยี่ห้อ/แบรนด์"],it["รุ่นย่อย"],it["หมวดหมู่"],it["แท็ก (คั่นด้วย ,)"],it["SKU"]].join(" ").toLowerCase().includes(kw));
+    render(f);
+  };
+  q.addEventListener("input",apply);
+  apply();
+}
 boot();
 </script>
 </body>
