@@ -4,184 +4,343 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>JUST COM</title>
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
-    :root{
-      --bg:#0b0e11;--panel:#0f1319;--card:#12161d;--line:#1c2430;
-      --text:#e7edf3;--muted:#9aa4b2;--radius:14px;--maxw:1200px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:'Prompt',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif}
-
-    /* ---------- Header / Banner (เต็มจอ) ---------- */
-    header{position:sticky;top:0;z-index:10;background:#0b0e11f0;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-    .banner-wrap{width:100%;margin:0 auto}          /* <- ไม่มี max-width แล้ว */
-    .banner{width:100%;height:auto;display:block}    /* เต็มกว้างเสมอ */
-
-    /* ---------- Body ---------- */
-    .container{max-width:var(--maxw);margin:16px auto;padding:0 16px}
-    input{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px;width:100%;outline:none;margin-bottom:16px}
-
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-    .card{
-      position:relative;                 /* ✅ ให้ริบบอนอ้างอิงได้ */
-      background:var(--card);border:1px solid var(--line);
-      border-radius:var(--radius);overflow:hidden;cursor:pointer;
-      display:flex;flex-direction:column;transition:.12s
-    }
-    .card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(0,0,0,.22)}
-    .thumb{width:100%;aspect-ratio:16/10;object-fit:cover;background:#0c1015}
-    .ct{padding:12px;display:flex;flex-direction:column;gap:8px}
-    .title{font-weight:800}
-    .muted{color:var(--muted)}
-    .price{font-weight:900}
-    .badges{display:flex;flex-wrap:wrap;gap:8px}
-    .badge{background:#fff;color:#111;border-radius:999px;padding:5px 10px;font-weight:800;border:1px solid #111}
-
-    /* ✅ ริบบอนโชว์ตลอด + อยู่เหนือรูป */
-    .ribbon{
-      position:absolute;top:12px;left:-36px;z-index:2;
-      transform:rotate(-20deg);
-      background:#b91c1c;color:#fff;
-      padding:6px 56px;font-weight:900;
-      box-shadow:0 8px 18px rgba(0,0,0,.25)
+    :root {
+      --bg: #0b0e11;
+      --card: #111620;
+      --line: #1f2937;
+      --muted: #9aa4b2;
+      --white: #fff;
     }
 
-    .empty{text-align:center;opacity:.75;margin:40px 0}
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, "Noto Sans Thai", sans-serif;
+      background: var(--bg);
+      color: var(--white);
+    }
 
-    /* ---------- Lightbox ---------- */
-    #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.82);display:none;place-items:center;z-index:9999}
-    #lightbox.open{display:grid}
-    .lb{width:min(96vw,1100px);max-height:90vh;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:1fr 330px;position:relative}
-    .lb-left{background:#0b0e11;display:flex;flex-direction:column}
-    .lb-main-wrap{padding:12px;display:flex;align-items:center;justify-content:center}
-    #lb-main{width:100%;max-height:64vh;object-fit:contain;background:#000;border-radius:10px}
-    #lb-thumbs{padding:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px;border-top:1px solid var(--line)}
-    #lb-thumbs img{width:100%;height:82px;object-fit:cover;border:1px solid var(--line);border-radius:8px;cursor:pointer}
-    .lb-right{padding:16px;overflow:auto}
-    #lb-title{font-weight:900;font-size:18px;margin-bottom:8px}
-    #lb-desc{margin-top:10px;color:var(--muted)}
-    #lb-close{position:absolute;top:10px;right:10px;background:#111;border:1px solid #333;color:#fff;padding:6px 10px;border-radius:8px;cursor:pointer}
+    header {
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+    }
 
-    footer{text-align:center;color:var(--muted);font-size:13px;margin:18px 0}
+    header img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      font-weight: 800;
+    }
+
+    input {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #fff;
+      padding: 8px 12px;
+      width: 100%;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .card:hover { transform: translateY(-3px); }
+
+    .thumb {
+      width: 100%;
+      aspect-ratio: 16/10;
+      object-fit: cover;
+      display: block;
+      background: #000;
+    }
+
+    .ct {
+      padding: 12px;
+    }
+
+    .title {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .price {
+      font-weight: 900;
+      font-size: 1.05rem;
+      margin-top: 4px;
+    }
+
+    .ribbon {
+      position: absolute;
+      top: 12px;
+      left: -36px;
+      transform: rotate(-20deg);
+      background: #e64;
+      color: #fff;
+      padding: 6px 56px;
+      font-weight: 900;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      font-size: 0.85rem;
+    }
+
+    footer {
+      text-align: center;
+      color: #9aa4b2;
+      padding: 20px;
+      font-size: 0.85rem;
+    }
+
+    /* Lightbox */
+    #lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    #lightbox.open { display: flex; }
+
+    .lb {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      background: #0b0e11;
+      border-radius: 12px;
+      overflow: hidden;
+      max-width: 1000px;
+      width: 95%;
+      max-height: 90vh;
+    }
+
+    .lb-main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      padding: 10px;
+    }
+
+    .lb-main img {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+    }
+
+    .lb-side {
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .lb-title {
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    .lb-spec {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .lb-thumbs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px;
+      border-top: 1px solid var(--line);
+      background: #0f0f0f;
+    }
+
+    .lb-thumbs img {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      cursor: pointer;
+      border-radius: 6px;
+      border: 1px solid #222;
+      transition: transform 0.2s ease;
+    }
+
+    .lb-thumbs img:hover { transform: scale(1.05); }
+
+    .lb-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #111;
+      border: 1px solid #444;
+      border-radius: 6px;
+      color: #fff;
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+
   </style>
 </head>
 <body>
+
   <header>
-    <div class="banner-wrap">
-      <img class="banner" src="images/banner.png" alt="Banner" />
-    </div>
+    <img src="images/banner.png" alt="Banner" />
   </header>
 
   <div class="container">
-    <h2>JUST COM</h2>
-    <input id="q" placeholder="ค้นหา: ชื่อ/แบรนด์/รุ่น..." />
+    <h1>JUST COM</h1>
+    <p style="color:#aaa;font-size:0.9rem;">จำหน่ายอุปกรณ์คอมมือหนึ่ง มือสอง พร้อมให้คำปรึกษา</p>
+    <input id="search" placeholder="ค้นหาชื่อสินค้า หรือแบรนด์..." />
+
     <div id="grid" class="grid"></div>
-    <div id="empty" class="empty" style="display:none">ไม่พบสินค้า</div>
+    <div id="empty" style="display:none;text-align:center;margin:20px 0;opacity:0.7;">ไม่พบสินค้า</div>
   </div>
 
   <footer>© Copyright 2025 All Rights Reserved By Just Com.</footer>
 
   <!-- Lightbox -->
-  <div id="lightbox" aria-hidden="true">
+  <div id="lightbox">
     <div class="lb">
-      <button id="lb-close">ปิด ✕</button>
-      <div class="lb-left">
-        <div class="lb-main-wrap"><img id="lb-main" alt=""></div>
-        <div id="lb-thumbs"></div>
+      <div class="lb-main">
+        <img id="lb-main" src="" alt="">
       </div>
-      <div class="lb-right">
-        <div id="lb-title"></div>
-        <div id="lb-spec"></div>
-        <div id="lb-desc"></div>
+      <div class="lb-side">
+        <div class="lb-title" id="lb-title"></div>
+        <div class="lb-spec" id="lb-spec"></div>
       </div>
+      <div class="lb-thumbs" id="lb-thumbs"></div>
+      <button id="lb-close" class="lb-close">ปิด</button>
     </div>
   </div>
- <script>
-// ---------- PATCH 1: ตัวช่วยอ่านรูปจาก item (ทนทานขึ้น) ----------
-function imagesFromItem(item){
-  // หา column แบบ fuzzy (กันชื่อเฮดเดอร์สะกดต่างกันเล็กน้อย)
-  const findCol = (needle) => {
-    const k = Object.keys(item).find(
-      key => key && key.toLowerCase().includes(needle)
-    );
-    return k || "";
-  };
 
-  const kMain = findCol("ลิงก์รูปภาพหลัก") || findCol("รูปภาพหลัก") || findCol("หลัก");
-  const kMore = findCol("ลิงก์รูปภาพเพิ่มเติม") || findCol("รูปภาพเพิ่มเติม") || findCol("เพิ่มเติม");
-
-  // อ่านค่าดิบ
-  const rawMain = (kMain ? item[kMain] : "") || "";
-  const rawMore = (kMore ? item[kMore] : "") || "";
-
-  // ฟังก์ชันล้าง/แตกสตริงให้เป็นรูป ๆ
-  const splitImgs = (s) => String(s)
-      .replace(/\uFEFF/g,"")         // BOM
-      .replace(/\r/g,"")             // CR
-      .replace(/[“”]/g,'"')          // fancy quotes
-      .replace(/(^"|"$)/g,"")        // trim "
-      .split(/[,，、\n]+/)            // คั่นด้วย , หรือขึ้นบรรทัดใหม่
-      .map(x => x.trim())
-      .filter(Boolean)
-      .map(u => {
-        // ถ้าไม่ใช่ URL ก็เติม images/
-        const file = u.replace(/^\/+/,'');
-        return /^https?:\/\//i.test(file) ? file : (file.startsWith("images/") ? file : "images/" + file);
+  <script>
+    async function loadCSV(path){
+      const res = await fetch(path + "?v=" + Date.now());
+      const txt = await res.text();
+      const rows = txt.replace(/\uFEFF/g,"").trim().split("\n");
+      const headers = rows.shift().split(",");
+      return rows.map(line=>{
+        const cols = line.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/);
+        const o = {};
+        headers.forEach((h,i)=>o[h.trim()] = (cols[i]||"").trim().replace(/^"|"$/g,""));
+        return o;
       });
+    }
 
-  // รวมหลัก+เพิ่มเติมและลบซ้ำ
-  const all = [...new Set([...splitImgs(rawMain), ...splitImgs(rawMore)])];
+    function imagesFromItem(it){
+      const all = [];
+      const add = s=>{
+        if(!s) return;
+        s.replace(/["']/g,"").split(/[,，、\n]+/).forEach(x=>{
+          const t = x.trim();
+          if(t) all.push(/^https?:\/\//i.test(t)?t:("images/"+t));
+        });
+      };
+      add(it["ลิงก์รูปภาพหลัก"]);
+      add(it["ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)"]);
+      return [...new Set(all)];
+    }
 
-  // ถ้าไม่มีอะไรเลย คืนอาเรย์ว่าง (ระบบหลักจะจัดการต่อ)
-  return all;
-}
+    const lb = {
+      root:null, main:null, thumbs:null, title:null, spec:null,
+      open(it){
+        const imgs = imagesFromItem(it);
+        this.main.src = imgs[0]||"";
+        this.thumbs.innerHTML="";
+        imgs.forEach((u,i)=>{
+          const im=document.createElement("img");
+          im.src=u;im.alt="img"+i;
+          im.onclick=()=>this.main.src=u;
+          this.thumbs.appendChild(im);
+        });
+        this.title.textContent=it["ชื่อสินค้า"]||"";
+        this.spec.innerHTML=`<b>แบรนด์:</b> ${it["ยี่ห้อ/แบรนด์"]||"-"}<br>
+                             <b>รุ่น:</b> ${it["รุ่นย่อย"]||"-"}<br>
+                             <b>ประกัน:</b> ${it["รับประกัน (วัน)"]||"-"} วัน<br>
+                             <b>ราคา:</b> ${Number(it["ราคา (THB)"]||0).toLocaleString('th-TH')} บาท`;
+        this.root.classList.add("open");
+      },
+      close(){ this.root.classList.remove("open"); }
+    };
 
-// ---------- PATCH 2: lightbox.open ใช้รูปจาก imagesFromItem ----------
-lb.open = function(item){
-  const imgs = imagesFromItem(item);
-  const arr = imgs.length ? imgs : [""]; // กันเคสไม่มีรูป
+    async function boot(){
+      lb.root=document.getElementById("lightbox");
+      lb.main=document.getElementById("lb-main");
+      lb.thumbs=document.getElementById("lb-thumbs");
+      lb.title=document.getElementById("lb-title");
+      lb.spec=document.getElementById("lb-spec");
+      document.getElementById("lb-close").onclick=()=>lb.close();
+      lb.root.onclick=e=>{if(e.target===lb.root)lb.close();};
 
-  this.main.src = arr[0];
-  this.thumbs.innerHTML = "";
-  arr.forEach((u,i)=>{
-    const im = document.createElement("img");
-    im.src = u; im.alt = "img"+i;
-    im.addEventListener("click",()=> this.main.src = u);
-    this.thumbs.appendChild(im);
-  });
+      const data=await loadCSV("data/justcom_inventory.csv");
+      render(data);
 
-  this.title.textContent = item["ชื่อสินค้า"] || item["รุ่นย่อย"] || item["SKU"] || "";
-  this.spec.innerHTML = [
-    item["ยี่ห้อ/แบรนด์"] ? `<div><b>แบรนด์:</b> ${item["ยี่ห้อ/แบรนด์"]}</div>` : "",
-    item["รุ่นย่อย"] ? `<div><b>รุ่น:</b> ${item["รุ่นย่อย"]}</div>` : "",
-    item["รับประกัน (วัน)"] ? `<div><b>ประกัน:</b> ${item["รับประกัน (วัน)"]} วัน</div>` : "",
-    item["ราคา (THB)"] ? `<div><b>ราคา:</b> ${Number(item["ราคา (THB)"]||0).toLocaleString('th-TH')} บาท</div>` : ""
-  ].filter(Boolean).join("");
+      document.getElementById("search").addEventListener("input",e=>{
+        const kw = e.target.value.trim().toLowerCase();
+        const filtered = data.filter(it=>{
+          const text = [it["ชื่อสินค้า"],it["ยี่ห้อ/แบรนด์"],it["รุ่นย่อย"],it["หมวดหมู่"]].join(" ").toLowerCase();
+          return text.includes(kw);
+        });
+        render(filtered);
+      });
+    }
 
-  this.desc.textContent = item["รายละเอียดเพิ่มเติม"] || "";
-  this.root.classList.add("open");
-};
+    function render(items){
+      const grid = document.getElementById("grid");
+      const empty = document.getElementById("empty");
+      grid.innerHTML="";
+      if(!items.length){ empty.style.display="block"; return;}
+      empty.style.display="none";
 
-// ---------- PATCH 3: แก้จุดเรียกรูปใน render ----------
-/* ในฟังก์ชัน render(items) ให้หา 2 บรรทัดนี้และแทนที่
+      items.forEach(it=>{
+        const imgs = imagesFromItem(it);
+        const cover = imgs[0]||"";
+        const status = (it["สถานะประกาศ (active|hidden|sold)"]||"active").toLowerCase();
+        const card = document.createElement("div");
+        card.className="card";
+        card.innerHTML = `
+          ${status==="sold"?`<div class="ribbon">SOLD OUT</div>`:""}
+          <img class="thumb" src="${cover}" alt="">
+          <div class="ct">
+            <div class="title">${it["ชื่อสินค้า"]||"ไม่ระบุชื่อ"}</div>
+            <div class="muted">${it["ยี่ห้อ/แบรนด์"]||""} ${it["รุ่นย่อย"]?("• "+it["รุ่นย่อย"]):""}</div>
+            <div class="price">${Number(it["ราคา (THB)"]||0).toLocaleString('th-TH')} บาท</div>
+          </div>`;
+        card.onclick = ()=>lb.open(it);
+        grid.appendChild(card);
+      });
+    }
 
-   // ของเดิม:
-   const imgs=[ item["ลิงก์รูปภาพหลัก"], ...listify(item["ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)"]) ].filter(Boolean);
-   const cover=imgs[0]||"";
-
-   // ของใหม่:
-*/
-function __PATCH__RENDER_USE_IMAGESFROMITEM(cardItem){
-  const imgs = imagesFromItem(cardItem);
-  const cover = imgs[0] || "";
-  return { imgs, cover };
-}
-// จากนั้นในจุดที่สร้างการ์ด ให้เขียนประมาณนี้:
-// const { imgs, cover } = __PATCH__RENDER_USE_IMAGESFROMITEM(item);
     boot();
   </script>
 </body>
 </html>
-
