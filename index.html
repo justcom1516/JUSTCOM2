@@ -1,346 +1,283 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>JUST COM</title>
   <style>
-    :root {
-      --bg: #0b0e11;
-      --card: #111620;
-      --line: #1f2937;
-      --muted: #9aa4b2;
-      --white: #fff;
+    :root{
+      --bg:#0d0f12;--card:#11151b;--line:#1f2530;--text:#e8eef7;--muted:#9fb0c6;--accent:#1363df;--sold:#ff4444;
+      --radius:14px;
     }
-
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, "Noto Sans Thai", sans-serif;
-      background: var(--bg);
-      color: var(--white);
-    }
-
-    header {
-      background: var(--bg);
-      border-bottom: 1px solid var(--line);
-    }
-
-    header img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 0 16px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 1.6rem;
-      font-weight: 800;
-    }
-
-    input {
-      background: #111;
-      border: 1px solid #333;
-      border-radius: 6px;
-      color: #fff;
-      padding: 8px 12px;
-      width: 100%;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 18px;
-      margin-top: 18px;
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      overflow: hidden;
-      position: relative;
-      cursor: pointer;
-      transition: transform 0.15s ease;
-    }
-
-    .card:hover { transform: translateY(-3px); }
-
-    .thumb {
-      width: 100%;
-      aspect-ratio: 16/10;
-      object-fit: cover;
-      display: block;
-      background: #000;
-    }
-
-    .ct {
-      padding: 12px;
-    }
-
-    .title {
-      font-weight: 700;
-      font-size: 1rem;
-    }
-
-    .muted {
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .price {
-      font-weight: 900;
-      font-size: 1.05rem;
-      margin-top: 4px;
-    }
-
-    .ribbon {
-      position: absolute;
-      top: 12px;
-      left: -36px;
-      transform: rotate(-20deg);
-      background: #e64;
-      color: #fff;
-      padding: 6px 56px;
-      font-weight: 900;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-      font-size: 0.85rem;
-    }
-
-    footer {
-      text-align: center;
-      color: #9aa4b2;
-      padding: 20px;
-      font-size: 0.85rem;
-    }
-
-    /* Lightbox */
-    #lightbox {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-
-    #lightbox.open { display: flex; }
-
-    .lb {
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      background: #0b0e11;
-      border-radius: 12px;
-      overflow: hidden;
-      max-width: 1000px;
-      width: 95%;
-      max-height: 90vh;
-    }
-
-    .lb-main {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #000;
-      padding: 10px;
-    }
-
-    .lb-main img {
-      max-width: 100%;
-      max-height: 80vh;
-      object-fit: contain;
-    }
-
-    .lb-side {
-      padding: 16px;
-      overflow-y: auto;
-    }
-
-    .lb-title {
-      font-weight: 800;
-      font-size: 1.1rem;
-    }
-
-    .lb-spec {
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
-
-    .lb-thumbs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 10px;
-      border-top: 1px solid var(--line);
-      background: #0f0f0f;
-    }
-
-    .lb-thumbs img {
-      width: 72px;
-      height: 72px;
-      object-fit: cover;
-      cursor: pointer;
-      border-radius: 6px;
-      border: 1px solid #222;
-      transition: transform 0.2s ease;
-    }
-
-    .lb-thumbs img:hover { transform: scale(1.05); }
-
-    .lb-close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #111;
-      border: 1px solid #444;
-      border-radius: 6px;
-      color: #fff;
-      padding: 4px 8px;
-      cursor: pointer;
-    }
-
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Prompt,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}
+    img{display:block;max-width:100%}
+    .wrap{max-width:1200px;margin:0 auto;padding:14px 16px}
+    .banner{width:100%;height:auto;border-bottom:1px solid var(--line);display:block} /* <-- ไม่ sticky แล้ว */
+    h1{margin:10px 0 4px 0;font-size:22px}
+    .sub{color:var(--muted);font-size:14px;margin-bottom:14px}
+    .toolbar{display:flex;gap:10px;margin:14px 0}
+    input,select{background:#0f141c;color:var(--text);border:1px solid var(--line);padding:10px 12px;border-radius:10px}
+    input{flex:1}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;position:relative}
+    .thumb{width:100%;aspect-ratio:16/9;background:#0b1118}
+    .ct{padding:14px}
+    .title{font-weight:800;margin-bottom:6px}
+    .muted{color:var(--muted);font-size:13px;margin-bottom:8px}
+    .price{font-weight:900}
+    .badge{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#111;padding:4px 10px;border-radius:999px;border:1px solid #111;font-weight:900;font-size:12px}
+    .row{display:flex;gap:8px;align-items:center;margin-top:8px}
+    .buybtn{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#111;border:1px solid #111;padding:10px 12px;border-radius:10px;font-weight:900}
+    .ribbon{position:absolute;left:12px;top:12px;transform:rotate(-20deg);background:var(--sold);color:#fff;padding:6px 56px;border:1px solid #000;box-shadow:0 6px 16px rgba(0,0,0,.35);font-weight:900}
+    .newtag{position:absolute;right:10px;top:10px;background:#0ea5e9;border:1px solid #0b465c;color:#001e2a;padding:3px 8px;border-radius:999px;font-size:12px;font-weight:900}
+    /* lightbox */
+    #lightbox{position:fixed;inset:0;background:rgba(7,10,15,.85);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
+    #lightbox.open{display:flex}
+    .lb{max-width:1100px;width:100%;background:#0f141b;border:1px solid #1b2430;border-radius:16px;overflow:hidden;display:grid;grid-template-columns:minmax(360px,1fr) 360px}
+    .lb-left{background:#0b1118;padding:14px 14px 0 14px;display:flex;flex-direction:column}
+    .lb-main{background:#0b1118;border:1px solid #101722;border-radius:10px;display:flex;align-items:center;justify-content:center;aspect-ratio:16/10}
+    .lb-main img{max-height:70vh;object-fit:contain}
+    .lb-thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px;margin:10px 0 14px}
+    .lb-thumbs img{width:100%;aspect-ratio:1/1;border:1px solid #101722;border-radius:8px;background:#000;cursor:pointer;padding:3px}
+    .lb-right{padding:14px 16px}
+    .lb-title{font-weight:900;margin-bottom:8px}
+    .lb-spec{display:grid;gap:6px;color:var(--muted);font-size:14px}
+    .lb-close{position:absolute;right:8px;top:8px;background:#0c121a;border:1px solid #1b2430;color:#fff;border-radius:999px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .empty{opacity:.7;text-align:center;margin:40px 0}
+    footer{margin:28px 0 60px;color:var(--muted);text-align:center}
   </style>
 </head>
 <body>
 
-  <header>
-    <img src="images/banner.png" alt="Banner" />
-  </header>
+  <!-- แบนเนอร์ (ไม่ sticky) -->
+  <img class="banner" src="images/banner.png" alt="Banner">
 
-  <div class="container">
+  <div class="wrap">
     <h1>JUST COM</h1>
-    <p style="color:#aaa;font-size:0.9rem;">จำหน่ายอุปกรณ์คอมมือหนึ่ง มือสอง พร้อมให้คำปรึกษา</p>
-    <input id="search" placeholder="ค้นหาชื่อสินค้า หรือแบรนด์..." />
+    <div class="sub">จำหน่ายอุปกรณ์คอมพิวเตอร์ มือหนึ่ง-มือสอง พร้อมให้คำปรึกษา</div>
+
+    <div class="toolbar">
+      <input id="q" placeholder="ค้นหา: ชื่อ/แบรนด์/รุ่น...">
+      <select id="cat">
+        <option value="">ทุกหมวดหมู่</option>
+        <option>การ์ดจอ (GPU)</option><option>ซีพียู (CPU)</option>
+        <option>เมนบอร์ด (Mainboard)</option><option>แรม (RAM)</option>
+        <option>สตอเรจ (SSD/HDD)</option><option>พาวเวอร์ซัพพลาย (PSU)</option>
+      </select>
+      <select id="status">
+        <option value="">สถานะ: ทั้งหมด</option>
+        <option value="active">active</option>
+        <option value="hidden">hidden</option>
+        <option value="sold">sold</option>
+      </select>
+    </div>
 
     <div id="grid" class="grid"></div>
-    <div id="empty" style="display:none;text-align:center;margin:20px 0;opacity:0.7;">ไม่พบสินค้า</div>
+    <div id="empty" class="empty" style="display:none">ไม่พบสินค้าใน CSV</div>
+    <footer>© Copyright 2025 All Rights Reserved By Just Com.</footer>
   </div>
 
-  <footer>© Copyright 2025 All Rights Reserved By Just Com.</footer>
-
-  <!-- Lightbox -->
-  <div id="lightbox">
+  <!-- lightbox -->
+  <div id="lightbox" role="dialog" aria-modal="true">
     <div class="lb">
-      <div class="lb-main">
-        <img id="lb-main" src="" alt="">
+      <div class="lb-left">
+        <div class="lb-main"><img id="lb-mainimg" src="" alt=""></div>
+        <div id="lb-thumbs" class="lb-thumbs"></div>
       </div>
-      <div class="lb-side">
-        <div class="lb-title" id="lb-title"></div>
-        <div class="lb-spec" id="lb-spec"></div>
+      <div class="lb-right">
+        <div id="lb-close" class="lb-close" title="ปิด">✕</div>
+        <div id="lb-title" class="lb-title"></div>
+        <div id="lb-spec" class="lb-spec"></div>
+        <div id="lb-desc" style="margin-top:8px"></div>
       </div>
-      <div class="lb-thumbs" id="lb-thumbs"></div>
-      <button id="lb-close" class="lb-close">ปิด</button>
     </div>
   </div>
 
-  <script>
-    async function loadCSV(path){
-      const res = await fetch(path + "?v=" + Date.now());
-      const txt = await res.text();
-      const rows = txt.replace(/\uFEFF/g,"").trim().split("\n");
-      const headers = rows.shift().split(",");
-      return rows.map(line=>{
-        const cols = line.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/);
-        const o = {};
-        headers.forEach((h,i)=>o[h.trim()] = (cols[i]||"").trim().replace(/^"|"$/g,""));
-        return o;
-      });
+<script>
+/* ========= CONFIG ========= */
+const CONFIG = {
+  mode: "csv",
+  csvPath: "data/justcom_inventory.csv",
+  defaultOrderTarget: "facebook",
+  IMG_PREFIX: "images/"  // 👈 ถ้าโฟลเดอร์รูปของเอิร์ธชื่ออื่น ปรับตรงนี้ เช่น "Images/" หรือ ""(ถ้าอยู่ root)
+};
+/* ========= utils ========= */
+function csvToArray(str, delim=","){
+  const rows = str.split(/\r?\n/).filter(x=>x.trim().length);
+  if(!rows.length) return [];
+  const headers = rows.shift().split(delim).map(h=>h.trim());
+  return rows.map(row=>{
+    const cols=[]; let cur="",inQ=false;
+    for(let i=0;i<row.length;i++){
+      const c=row[i];
+      if(c=='"'){inQ=!inQ;}
+      else if(c===delim && !inQ){cols.push(cur);cur="";}
+      else cur+=c;
     }
+    cols.push(cur);
+    const obj={};
+    headers.forEach((h,i)=>obj[h]=(cols[i]??"").trim());
+    return obj;
+  });
+}
+function fmt(n){ try{return Number(n).toLocaleString('th-TH')}catch(e){return n}}
+function listify(s){
+  if(!s) return [];
+  return String(s).replace(/^["']|["']$/g,"")
+    .split(/[,，、\n]+/).map(x=>x.trim()).filter(Boolean);
+}
+function parseDate(s){ if(!s) return 0; const d=new Date((s+"").trim().replace(" ","T")); return isNaN(d)?0:d.getTime(); }
+function isNewItem(item){
+  const tags=(item["แท็ก (คั่นด้วย ,)"]||"").toLowerCase();
+  if(tags.includes("new")) return true;
+  const d=item["วันที่รับของ (YYYY-MM-DD)"]||"";
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d)) return false;
+  const diff=(Date.now()-new Date(d+"T00:00:00"))/86400000;
+  return diff<=14;
+}
+/* build image list from item */
+function imagesFromItem(it){
+  const out=[];
+  const add=(field)=>{
+    listify(it[field]).forEach(t=>{
+      // ถ้าเป็น http ใช้ตรง ๆ / ไม่งั้น prefix ให้
+      out.push(/^https?:\/\//i.test(t)?t:(CONFIG.IMG_PREFIX + t.replace(/^\/+/,"")));
+    });
+  };
+  add("ลิงก์รูปภาพหลัก");
+  add("ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)");
+  return [...new Set(out)];
+}
+/* choose buy link (คงไว้เหมือนเดิม) */
+function pickBuyLink(item){
+  const PAGE_URL = item["ลิงก์โพสต์ Facebook (ถ้ามี)"] || "https://m.me/justcomth";
+  const dest = (item["ปุ่มสั่งซื้อให้เด้งไปที่ (facebook|line|custom_url)"]||CONFIG.defaultOrderTarget).toLowerCase();
+  const custom = item["ลิงก์ปลายทางปุ่มสั่งซื้อ (ถ้าเลือก custom_url ให้ใส่ที่นี่)"] || "";
+  if(dest==="facebook") return PAGE_URL;
+  if(dest==="line") return "https://line.me/R/ti/p/~your_line_id";
+  if(dest==="custom_url") return custom || PAGE_URL;
+  return PAGE_URL;
+}
+/* ========= lightbox ========= */
+const lb={root:null,main:null,thumbs:null,title:null,spec:null,desc:null,
+  open(item){
+    const imgs = imagesFromItem(item);
+    this.title.textContent = item["ชื่อสินค้า"] || item["รุ่นย่อย"] || item["SKU"] || "";
+    this.main.src = imgs[0] || "";
+    this.thumbs.innerHTML = "";
+    imgs.forEach((u,i)=>{
+      const im=document.createElement("img"); im.src=u; im.alt="img"+i;
+      im.addEventListener("click",()=>this.main.src=u);
+      this.thumbs.appendChild(im);
+    });
+    this.spec.innerHTML = [
+      item["ยี่ห้อ/แบรนด์"]?`<div><b>แบรนด์:</b> ${item["ยี่ห้อ/แบรนด์"]}</div>`:"",
+      item["รุ่นย่อย"]?`<div><b>รุ่น:</b> ${item["รุ่นย่อย"]}</div>`:"",
+      item["รับประกัน (วัน)"]?`<div><b>ประกัน:</b> ${item["รับประกัน (วัน)"]} วัน</div>`:"",
+      item["ราคา (THB)"]?`<div><b>ราคา:</b> ${fmt(item["ราคา (THB)"])} ฿</div>`:""
+    ].filter(Boolean).join("");
+    this.desc.textContent = item["รายละเอียดเพิ่มเติม"]||"";
+    this.root.classList.add("open");
+  },
+  close(){ this.root.classList.remove("open"); this.main.src=""; this.thumbs.innerHTML=""; this.spec.innerHTML=""; this.desc.textContent=""; }
+};
+function initLightbox(){
+  lb.root=document.getElementById("lightbox");
+  lb.main=document.getElementById("lb-mainimg");
+  lb.thumbs=document.getElementById("lb-thumbs");
+  lb.title=document.getElementById("lb-title");
+  lb.spec=document.getElementById("lb-spec");
+  lb.desc=document.getElementById("lb-desc");
+  document.getElementById("lb-close").addEventListener("click",()=>lb.close());
+  lb.root.addEventListener("click",(e)=>{ if(e.target===lb.root) lb.close(); });
+}
+/* ========= render ========= */
+function render(items){
+  const grid=document.getElementById("grid");
+  const empty=document.getElementById("empty");
+  grid.innerHTML="";
+  if(!items.length){ empty.style.display="block"; return; }
+  empty.style.display="none";
 
-    function imagesFromItem(it){
-      const all = [];
-      const add = s=>{
-        if(!s) return;
-        s.replace(/["']/g,"").split(/[,，、\n]+/).forEach(x=>{
-          const t = x.trim();
-          if(t) all.push(/^https?:\/\//i.test(t)?t:("images/"+t));
-        });
-      };
-      add(it["ลิงก์รูปภาพหลัก"]);
-      add(it["ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)"]);
-      return [...new Set(all)];
-    }
+  items.forEach(item=>{
+    if((item["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="hidden") return;
+    const imgs = imagesFromItem(item);
+    const cover = imgs[0] || "";
+    const status = (item["สถานะประกาศ (active|hidden|sold)"]||"active").toLowerCase();
+    const price = item["ราคา (THB)"]? fmt(item["ราคา (THB)"])+" บาท" : "สอบถามราคา";
+    const b1 = item["จำนวนคงเหลือ"]?`<span class="badge">คงเหลือ ${item["จำนวนคงเหลือ"]}</span>`:"";
+    const b2 = item["รับประกัน (วัน)"]?`<span class="badge">ประกัน ${item["รับประกัน (วัน)"]} วัน</span>`:"";
 
-    const lb = {
-      root:null, main:null, thumbs:null, title:null, spec:null,
-      open(it){
-        const imgs = imagesFromItem(it);
-        this.main.src = imgs[0]||"";
-        this.thumbs.innerHTML="";
-        imgs.forEach((u,i)=>{
-          const im=document.createElement("img");
-          im.src=u;im.alt="img"+i;
-          im.onclick=()=>this.main.src=u;
-          this.thumbs.appendChild(im);
-        });
-        this.title.textContent=it["ชื่อสินค้า"]||"";
-        this.spec.innerHTML=`<b>แบรนด์:</b> ${it["ยี่ห้อ/แบรนด์"]||"-"}<br>
-                             <b>รุ่น:</b> ${it["รุ่นย่อย"]||"-"}<br>
-                             <b>ประกัน:</b> ${it["รับประกัน (วัน)"]||"-"} วัน<br>
-                             <b>ราคา:</b> ${Number(it["ราคา (THB)"]||0).toLocaleString('th-TH')} บาท`;
-        this.root.classList.add("open");
-      },
-      close(){ this.root.classList.remove("open"); }
-    };
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML = `
+      ${status==="sold"?`<div class="ribbon">SOLD OUT</div>`:""}
+      ${isNewItem(item)?`<div class="newtag">NEW</div>`:""}
+      ${cover?`<img class="thumb" src="${cover}" alt="">`:`<div class="thumb"></div>`}
+      <div class="ct">
+        <div class="title">${item["ชื่อสินค้า"]||item["รุ่นย่อย"]||item["SKU"]||"สินค้าไม่ระบุชื่อ"}</div>
+        <div class="muted">${item["ยี่ห้อ/แบรนด์"]||""} ${item["รุ่นย่อย"]?("• "+item["รุ่นย่อย"]):""}</div>
+        <div class="price">${price}</div>
+        <div class="row">${b1}${b2}</div>
+        <div class="row">
+          <a class="buybtn" href="${pickBuyLink(item)}" target="_blank" rel="noopener">สั่งซื้อ</a>
+          <span class="badge">🖼️ ${imgs.length}</span>
+        </div>
+      </div>`;
+    card.addEventListener("click",()=>lb.open(item));
+    grid.appendChild(card);
+  });
+}
+/* ========= boot ========= */
+async function boot(){
+  initLightbox();
+  const q=document.getElementById("q");
+  const cat=document.getElementById("cat");
+  const status=document.getElementById("status");
 
-    async function boot(){
-      lb.root=document.getElementById("lightbox");
-      lb.main=document.getElementById("lb-main");
-      lb.thumbs=document.getElementById("lb-thumbs");
-      lb.title=document.getElementById("lb-title");
-      lb.spec=document.getElementById("lb-spec");
-      document.getElementById("lb-close").onclick=()=>lb.close();
-      lb.root.onclick=e=>{if(e.target===lb.root)lb.close();};
+  async function loadData(){
+    const res=await fetch(CONFIG.csvPath+(CONFIG.csvPath.includes("?")?"&":"?")+"v="+Date.now());
+    const text=await res.text();
+    return csvToArray(text);
+  }
+  function apply(list){
+    const qv=q.value.trim().toLowerCase();
+    const cv=cat.value.trim();
+    const sv=status.value.trim().toLowerCase();
+    let items=[...list];
 
-      const data=await loadCSV("data/justcom_inventory.csv");
-      render(data);
+    if(qv) items = items.filter(it=>{
+      const hay=[it["ชื่อสินค้า"],it["ยี่ห้อ/แบรนด์"],it["รุ่นย่อย"],it["หมวดหมู่"],it["แท็ก (คั่นด้วย ,)"],it["SKU"]]
+        .join(" ").toLowerCase();
+      return hay.includes(qv);
+    });
+    if(cv) items = items.filter(it=>(it["หมวดหมู่"]||"")===cv);
+    if(sv) items = items.filter(it=>(it["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()===sv);
 
-      document.getElementById("search").addEventListener("input",e=>{
-        const kw = e.target.value.trim().toLowerCase();
-        const filtered = data.filter(it=>{
-          const text = [it["ชื่อสินค้า"],it["ยี่ห้อ/แบรนด์"],it["รุ่นย่อย"],it["หมวดหมู่"]].join(" ").toLowerCase();
-          return text.includes(kw);
-        });
-        render(filtered);
-      });
-    }
+    // sort: active > recent date > price desc
+    items.sort((a,b)=>{
+      const sa=((a["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold")?1:0;
+      const sb=((b["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold")?1:0;
+      if(sa!==sb) return sa-sb;
+      const da=parseDate(a["อัปเดตล่าสุด (YYYY-MM-DD HH:MM)"])||parseDate(a["วันที่รับของ (YYYY-MM-DD)"]);
+      const db=parseDate(b["อัปเดตล่าสุด (YYYY-MM-DD HH:MM)"])||parseDate(b["วันที่รับของ (YYYY-MM-DD)"]);
+      if(da!==db) return db-da;
+      const pa=Number(a["ราคา (THB)"]||0), pb=Number(b["ราคา (THB)"]||0);
+      return pb-pa;
+    });
+    render(items);
+  }
 
-    function render(items){
-      const grid = document.getElementById("grid");
-      const empty = document.getElementById("empty");
-      grid.innerHTML="";
-      if(!items.length){ empty.style.display="block"; return;}
-      empty.style.display="none";
-
-      items.forEach(it=>{
-        const imgs = imagesFromItem(it);
-        const cover = imgs[0]||"";
-        const status = (it["สถานะประกาศ (active|hidden|sold)"]||"active").toLowerCase();
-        const card = document.createElement("div");
-        card.className="card";
-        card.innerHTML = `
-          ${status==="sold"?`<div class="ribbon">SOLD OUT</div>`:""}
-          <img class="thumb" src="${cover}" alt="">
-          <div class="ct">
-            <div class="title">${it["ชื่อสินค้า"]||"ไม่ระบุชื่อ"}</div>
-            <div class="muted">${it["ยี่ห้อ/แบรนด์"]||""} ${it["รุ่นย่อย"]?("• "+it["รุ่นย่อย"]):""}</div>
-            <div class="price">${Number(it["ราคา (THB)"]||0).toLocaleString('th-TH')} บาท</div>
-          </div>`;
-        card.onclick = ()=>lb.open(it);
-        grid.appendChild(card);
-      });
-    }
-
-    boot();
-  </script>
+  const data = await loadData();
+  apply(data);
+  q.addEventListener("input",()=>apply(data));
+  cat.addEventListener("change",()=>apply(data));
+  status.addEventListener("change",()=>apply(data));
+}
+boot();
+</script>
 </body>
 </html>
