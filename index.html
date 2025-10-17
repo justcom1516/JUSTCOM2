@@ -98,152 +98,90 @@
       </div>
     </div>
   </div>
+ <script>
+// ---------- PATCH 1: ตัวช่วยอ่านรูปจาก item (ทนทานขึ้น) ----------
+function imagesFromItem(item){
+  // หา column แบบ fuzzy (กันชื่อเฮดเดอร์สะกดต่างกันเล็กน้อย)
+  const findCol = (needle) => {
+    const k = Object.keys(item).find(
+      key => key && key.toLowerCase().includes(needle)
+    );
+    return k || "";
+  };
 
-  <script>
-    /* ---------------- Config ---------------- */
-    const CONFIG = { csvPath: "data/justcom_inventory.csv" };
+  const kMain = findCol("ลิงก์รูปภาพหลัก") || findCol("รูปภาพหลัก") || findCol("หลัก");
+  const kMore = findCol("ลิงก์รูปภาพเพิ่มเติม") || findCol("รูปภาพเพิ่มเติม") || findCol("เพิ่มเติม");
 
-    /* ---------------- CSV utils (robust) ---------------- */
-    function csvToArray(str, delim = ",") {
-      const rows = str.split("\n").filter(x => x.trim().length);
-      if (!rows.length) return [];
-      const headers = rows.shift().split(delim).map(h => h.trim());
-      return rows.map(row => {
-        const cols = [];
-        let cur = "", inQ = false;
-        for (let i = 0; i < row.length; i++) {
-          const c = row[i];
-          if (c === '"') inQ = !inQ;
-          else if (c === delim && !inQ) { cols.push(cur); cur = ""; }
-          else cur += c;
-        }
-        cols.push(cur);
-        const obj = {};
-        headers.forEach((h, i) => obj[h] = (cols[i] ?? "").trim());
-        return obj;
+  // อ่านค่าดิบ
+  const rawMain = (kMain ? item[kMain] : "") || "";
+  const rawMore = (kMore ? item[kMore] : "") || "";
+
+  // ฟังก์ชันล้าง/แตกสตริงให้เป็นรูป ๆ
+  const splitImgs = (s) => String(s)
+      .replace(/\uFEFF/g,"")         // BOM
+      .replace(/\r/g,"")             // CR
+      .replace(/[“”]/g,'"')          // fancy quotes
+      .replace(/(^"|"$)/g,"")        // trim "
+      .split(/[,，、\n]+/)            // คั่นด้วย , หรือขึ้นบรรทัดใหม่
+      .map(x => x.trim())
+      .filter(Boolean)
+      .map(u => {
+        // ถ้าไม่ใช่ URL ก็เติม images/
+        const file = u.replace(/^\/+/,'');
+        return /^https?:\/\//i.test(file) ? file : (file.startsWith("images/") ? file : "images/" + file);
       });
-    }
 
-    // ✅ แยกค่ารูปภาพ: ตัด " ' \r, ช่องว่าง, คอมมา, บรรทัดใหม่
-    function listify(s){
-      if(!s) return [];
-      return String(s)
-        .replace(/["']/g,"")
-        .replace(/\r/g,"")
-        .split(/[,，、\n]+/)
-        .map(x=>x.trim())
-        .filter(Boolean);
-    }
+  // รวมหลัก+เพิ่มเติมและลบซ้ำ
+  const all = [...new Set([...splitImgs(rawMain), ...splitImgs(rawMore)])];
 
-    function fmt(n){ try { return Number(n).toLocaleString('th-TH'); } catch(e){ return n; } }
-    function parseDate(s){ if(!s) return 0; const d=new Date(s.replace(" ","T")); return isNaN(d)?0:d.getTime(); }
+  // ถ้าไม่มีอะไรเลย คืนอาเรย์ว่าง (ระบบหลักจะจัดการต่อ)
+  return all;
+}
 
-    /* ---------------- Lightbox ---------------- */
-    const lb = {
-      root:null, main:null, thumbs:null, title:null, spec:null, desc:null,
-      open(item){
-        const imgs=[
-          item["ลิงก์รูปภาพหลัก"],
-          ...listify(item["ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)"])
-        ]
-        .filter(Boolean)
-        .map(u => /^https?:\/\//i.test(u) ? u : (u.startsWith("images/") ? u : "images/"+u));
+// ---------- PATCH 2: lightbox.open ใช้รูปจาก imagesFromItem ----------
+lb.open = function(item){
+  const imgs = imagesFromItem(item);
+  const arr = imgs.length ? imgs : [""]; // กันเคสไม่มีรูป
 
-        this.main.src = imgs[0] || "";
-        this.thumbs.innerHTML = "";
-        imgs.forEach((u,i)=>{
-          const im=document.createElement("img");
-          im.src=u; im.alt="img"+i;
-          im.addEventListener("click",()=>this.main.src=u);
-          this.thumbs.appendChild(im);
-        });
+  this.main.src = arr[0];
+  this.thumbs.innerHTML = "";
+  arr.forEach((u,i)=>{
+    const im = document.createElement("img");
+    im.src = u; im.alt = "img"+i;
+    im.addEventListener("click",()=> this.main.src = u);
+    this.thumbs.appendChild(im);
+  });
 
-        this.title.textContent=item["ชื่อสินค้า"]||item["รุ่นย่อย"]||item["SKU"]||"";
-        this.spec.innerHTML = `
-          <div><b>แบรนด์:</b> ${item["ยี่ห้อ/แบรนด์"]||"-"}</div>
-          <div><b>รุ่น:</b> ${item["รุ่นย่อย"]||"-"}</div>
-          <div><b>ประกัน:</b> ${item["รับประกัน (วัน)"]||"-"} วัน</div>
-          <div><b>ราคา:</b> ${item["ราคา (THB)"]?fmt(item["ราคา (THB)"]):"-"} บาท</div>`;
-        this.desc.textContent=item["รายละเอียดเพิ่มเติม"]||"";
-        this.root.classList.add("open");
-      },
-      close(){ this.root.classList.remove("open"); }
-    };
+  this.title.textContent = item["ชื่อสินค้า"] || item["รุ่นย่อย"] || item["SKU"] || "";
+  this.spec.innerHTML = [
+    item["ยี่ห้อ/แบรนด์"] ? `<div><b>แบรนด์:</b> ${item["ยี่ห้อ/แบรนด์"]}</div>` : "",
+    item["รุ่นย่อย"] ? `<div><b>รุ่น:</b> ${item["รุ่นย่อย"]}</div>` : "",
+    item["รับประกัน (วัน)"] ? `<div><b>ประกัน:</b> ${item["รับประกัน (วัน)"]} วัน</div>` : "",
+    item["ราคา (THB)"] ? `<div><b>ราคา:</b> ${Number(item["ราคา (THB)"]||0).toLocaleString('th-TH')} บาท</div>` : ""
+  ].filter(Boolean).join("");
 
-    function initLightbox(){
-      lb.root=document.getElementById("lightbox");
-      lb.main=document.getElementById("lb-main");
-      lb.thumbs=document.getElementById("lb-thumbs");
-      lb.title=document.getElementById("lb-title");
-      lb.spec=document.getElementById("lb-spec");
-      lb.desc=document.getElementById("lb-desc");
-      document.getElementById("lb-close").addEventListener("click",()=>lb.close());
-      lb.root.addEventListener("click",(e)=>{ if(e.target===lb.root) lb.close(); });
-    }
+  this.desc.textContent = item["รายละเอียดเพิ่มเติม"] || "";
+  this.root.classList.add("open");
+};
 
-    /* ---------------- Render ---------------- */
-    function render(items){
-      const grid=document.getElementById("grid");
-      const empty=document.getElementById("empty");
-      grid.innerHTML="";
+// ---------- PATCH 3: แก้จุดเรียกรูปใน render ----------
+/* ในฟังก์ชัน render(items) ให้หา 2 บรรทัดนี้และแทนที่
 
-      if(!items.length){ empty.style.display="block"; return; }
-      empty.style.display="none";
+   // ของเดิม:
+   const imgs=[ item["ลิงก์รูปภาพหลัก"], ...listify(item["ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)"]) ].filter(Boolean);
+   const cover=imgs[0]||"";
 
-      items.forEach(item=>{
-        if((item["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="hidden") return;
-        const isSold=((item["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold");
-        const el=document.createElement("div");
-        el.className="card";
-        el.innerHTML=`
-          ${isSold?`<div class="ribbon">SOLD OUT</div>`:""}
-          <img class="thumb" src="${item["ลิงก์รูปภาพหลัก"]||""}" alt="">
-          <div class="ct">
-            <div class="title">${item["ชื่อสินค้า"]||item["รุ่นย่อย"]||item["SKU"]||"สินค้าไม่ระบุชื่อ"}</div>
-            <div class="muted">${item["ยี่ห้อ/แบรนด์"]||""} ${item["รุ่นย่อย"]?("• "+item["รุ่นย่อย"]):""}</div>
-            <div class="price">${item["ราคา (THB)"]?fmt(item["ราคา (THB)"]):"สอบถาม"} บาท</div>
-            <div class="badges">
-              ${item["จำนวนคงเหลือ"]?`<span class="badge">คงเหลือ ${item["จำนวนคงเหลือ"]}</span>`:""}
-              ${item["รับประกัน (วัน)"]?`<span class="badge">ประกัน ${item["รับประกัน (วัน)"]} วัน</span>`:""}
-            </div>
-          </div>`;
-        el.addEventListener("click",()=>lb.open(item));
-        grid.appendChild(el);
-      });
-    }
-
-    /* ---------------- Boot ---------------- */
-    async function boot(){
-      initLightbox();
-      const res=await fetch(CONFIG.csvPath+"?v="+Date.now());
-      const text=await res.text();
-      const data=csvToArray(text);
-
-      const q=document.getElementById("q");
-      const apply=()=>{
-        const kw=q.value.trim().toLowerCase();
-        let items=data;
-        if(kw){
-          items=items.filter(it=>(
-            [it["ชื่อสินค้า"],it["ยี่ห้อ/แบรนด์"],it["รุ่นย่อย"],it["หมวดหมู่"],it["แท็ก (คั่นด้วย ,)"],it["SKU"]]
-              .join(" ").toLowerCase().includes(kw)
-          ));
-        }
-        items.sort((a,b)=>{
-          const sa=((a["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold")?1:0;
-          const sb=((b["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold")?1:0;
-          if(sa!==sb) return sa-sb;
-          const da=parseDate(a["อัปเดตล่าสุด (YYYY-MM-DD HH:MM)"])||parseDate(a["วันที่รับของ (YYYY-MM-DD)"]);
-          const db=parseDate(b["อัปเดตล่าสุด (YYYY-MM-DD HH:MM)"])||parseDate(b["วันที่รับของ (YYYY-MM-DD)"]);
-          if(da!==db) return db-da;
-          return Number(b["ราคา (THB)"]||0)-Number(a["ราคา (THB)"]||0);
-        });
-        render(items);
-      };
-      apply();
-      q.addEventListener("input",apply);
-    }
+   // ของใหม่:
+*/
+function __PATCH__RENDER_USE_IMAGESFROMITEM(cardItem){
+  const imgs = imagesFromItem(cardItem);
+  const cover = imgs[0] || "";
+  return { imgs, cover };
+}
+// จากนั้นในจุดที่สร้างการ์ด ให้เขียนประมาณนี้:
+// const { imgs, cover } = __PATCH__RENDER_USE_IMAGESFROMITEM(item);
     boot();
   </script>
 </body>
 </html>
+
