@@ -5,557 +5,402 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>JUST COM — แคตตาล็อกสินค้า</title>
 <meta name="description" content="หน้ารวมสินค้า JUST COM พร้อมค้นหา แยกหมวด ป้ายขายแล้ว และปุ่มสั่งซื้อเด้งไปแชทเพจ">
-<!-- ฟอนต์ Prompt -->
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico"> 
 <style>
-:root{
-  --bg: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
-  --card: rgba(30, 35, 45, 0.85);
-  --card-hover: rgba(40, 45, 60, 0.95);
-  --muted: #93a1b3;
-  --line: rgba(255, 255, 255, 0.08);
-  --white: #eaf0f7;
-  --accent: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --accent-red: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --accent-green: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  --radius: 20px;
-  --gap: 20px;
-  --maxw: 1400px;
-  --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-  --shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.6);
+:root{--bg:#0f1114;--card:#151a1f;--muted:#93a1b3;--line:#222a33;--white:#eaf0f7;--radius:16px;--gap:16px;--maxw:1200px;}
+*{box-sizing:border-box}html,body{
+margin:0;
+font-family:'Prompt', ui-sans-serif, system-ui, 'Segoe UI', Roboto, 'Noto Sans Thai', sans-serif;
+background:var(--bg);
+color:var(--white);
 }
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+select {
+background-color: #ffffff;
+color: #000000;
+border: 1px solid #ccc;
+padding: 8px;
+border-radius: 6px;
 }
-
-html, body {
-  font-family: 'Prompt', ui-sans-serif, system-ui, 'Segoe UI', Roboto, 'Noto Sans Thai', sans-serif;
-  background: #0a0a0f;
-  background-image: 
-    radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(245, 87, 108, 0.1) 0%, transparent 50%);
-  background-attachment: fixed;
-  color: var(--white);
-  overflow-x: hidden;
-}
-
-/* Modern Select & Input Styling */
-select, input {
-  width: 100%;
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  color: var(--white);
-  font-size: 14px;
-  transition: all 0.3s ease;
-  font-family: 'Prompt', sans-serif;
-}
-
-select:hover, input:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(102, 126, 234, 0.5);
-}
-
-select:focus, input:focus {
-  outline: none;
-  background: rgba(255, 255, 255, 0.15);
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-}
-
 select option {
-  background: #1a1a2e;
-  color: var(--white);
-  padding: 10px;
+background-color: #ffffff;
+color: #000000;
+}
+a{color:inherit;text-decoration:none}header{position:sticky;top:0;z-index:10;background:rgba(15,17,20,.75);backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid var(--line)}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:10px 16px}.row{display:flex;gap:var(--gap);flex-wrap:wrap;align-items:center}.grow{flex:1}.logo{height:36px;width:auto}.sub{opacity:.8;font-size:.9rem}
+
+/* 🟢 การปรับปรุงสำคัญสำหรับ Mobile: Input/Select เต็มความกว้าง */
+input,select{width:100%;padding:10px 12px;background:#0d1013;border:1px solid var(--line);border-radius:12px;color:var(--white)}select option{color:#0d1013}
+.banner{width:100%;height:auto;border-bottom:1px solid var(--line);display:block}.notice{max-width:var(--maxw);margin:12px auto 0;padding:0 16px;color:var(--muted)}
+.notice .chip{display:inline-flex;align-items:center;gap:8px;background:#0d1013;border:1px solid var(--line);border-radius:999px;padding:8px 12px;margin-right:8px;}
+
+/* 🟢 การปรับปรุง: Card Grid ให้ยืดหยุ่นกว่าเดิมบนมือถือ */
+.grid{max-width:var(--maxw);margin:18px auto 80px;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+@media (max-width: 600px) {
+    /* บนมือถือขนาดเล็ก กำหนดคอลัมน์เดียวและขนาดเล็กกว่า */
+    .grid{grid-template-columns:repeat(auto-fill,minmax(90%,1fr));justify-content:center;padding:0 10px;margin-left:auto;margin-right:auto;}
+    .card{max-width:380px;margin:0 auto;} /* จำกัดความกว้าง Card เพื่อความสวยงาม */
+}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;position:relative;transition:transform .08s ease, box-shadow .08s ease}
+.card:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.25)}.thumb{background:#0b0e11;aspect-ratio:16/10;object-fit:cover;width:100%;display:block}
+.ct{padding:14px;display:flex;flex-direction:column;gap:10px}.title{font-weight:800}.muted{opacity:.8;color:var(--muted);font-size:.92rem}.price{font-weight:900}
+.badges{display:flex;flex-wrap:wrap;gap:6px}.badge{background:#0d1013;border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-size:.8rem}
+.buybtn{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#111;border:1px solid #111;padding:10px 12px;border-radius:10px;font-weight:900}
+.buybtn:hover{background:#f3f3f3}.buybtn svg{width:16px;height:16px}
+.ribbon{position:absolute;top:12px;left:-36px;transform:rotate(-20deg);background:#b91c1c;color:#fff;padding:6px 56px;border:1px solid #ef4444;font-weight:900;box-shadow:0 6px 16px rgba(0,0,0,.4)}
+.newtag{position:absolute;top:12px;right:12px;background:#059669;color:#fff;padding:6px 10px;border-radius:10px;border:1px solid #10b981;font-weight:900}
+.empty{opacity:.7;text-align:center}
+
+/* 🟢 การปรับปรุง Lightbox สำหรับ Desktop */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:100;padding:10px}.lightbox.open{display:flex}
+.lb{max-width:min(96vw,1280px); /* ขยายความกว้างสูงสุดของ Lightbox */ max-height:98vh;background:#0b0e11;border:1px solid var(--line);border-radius:16px;overflow:hidden;color:var(--white)}
+.lb-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line)}
+
+/* *** โค้ดใหม่: จัด Layout เป็น 2 แถวหลัก (Row) ใน Desktop *** */
+.lb-body{
+    display: flex; /* ใช้ Flexbox เพื่อจัดเรียงส่วนหลัก */
+    flex-direction: column; 
+    gap: 14px;
+    padding: 14px;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* 🟢 ส่วนบน: Main Image และ Thumbnails */
+.lb-top-section {
+    display: grid;
+    /* Main Image: 3 ส่วน, Thumbnails: 1 ส่วน */
+    grid-template-columns: 3fr 1fr; 
+    gap: 14px;
+}
+/* 🟢 ส่วนล่าง: Specs และ Description */
+.lb-bottom-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* แบ่งเป็น 2 คอลัมน์สำหรับ Spec และ Desc */
+    gap: 14px;
 }
 
-/* Modern Header */
-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(10, 10, 15, 0.85);
-  backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+.lb-main{
+    height: 70vh; /* เพิ่มความสูงของรูปภาพหลักให้ใหญ่ขึ้น */
+    max-height: 720px;
+    background:#000;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    border-radius:10px;
+    overflow:hidden;
+    padding-bottom:10px;
+}
+.lb-main img{max-width:100%;height:auto;max-height:100%;object-fit:contain}
+
+/* ปรับ Thumbnails ให้เรียงเป็นคอลัมน์ด้านขวา (อยู่ใน lb-top-section) */
+.lb-thumbs-wrapper {
+    display: flex;
+    flex-direction: column; /* เรียงภาพย่อยเป็นแนวตั้ง */
+    gap: 8px;
+    max-height: 70vh; /* จำกัดความสูงตามภาพหลัก */
+    overflow-y: auto; /* ให้ Scroll ได้หากภาพเยอะ */
+    padding-right: 5px; /* เว้นระยะจาก Scrollbar */
+}
+.lb-thumbs img{
+    width:100%;
+    height:auto; /* ปรับให้ภาพย่อยปรับความสูงตามสัดส่วน */
+    aspect-ratio: 1 / 1; /* บังคับให้เป็นสี่เหลี่ยมจตุรัส */
+    object-fit:cover;
+    border:2px solid var(--line);
+    border-radius:8px;
+    cursor:pointer
+}
+.lb-thumbs img:hover{border-color:#fff} 
+
+/* 🟢 การปรับปรุง Lightbox สำหรับ Mobile (จอเล็กกว่า 800px) */
+@media (max-width: 800px) {
+    .lb-body {
+        flex-direction: column; /* กลับเป็นแนวตั้ง */
+        padding: 10px;
+        gap: 10px;
+    }
+    .lb-top-section {
+        grid-template-columns: 1fr; /* กลับเป็น 1 คอลัมน์ */
+        gap: 10px;
+    }
+    .lb-bottom-section {
+        grid-template-columns: 1fr; /* กลับเป็น 1 คอลัมน์ */
+        gap: 10px;
+    }
+    .lb-main{height:40vh;max-height:unset;} /* ลดความสูงของรูปหลัก */
+    .lb-thumbs-wrapper {
+        flex-direction: row; /* ภาพย่อยเรียงเป็นแถวแนวนอน */
+        overflow-x: auto; /* ให้ Scroll แนวนอน */
+        max-height: 100px;
+        padding-right: 0;
+    }
+    .lb-thumbs-wrapper img {
+        width: 80px; /* กำหนดความกว้างบนมือถือ */
+        height: 80px;
+        flex-shrink: 0; /* ไม่ให้ภาพย่อขนาด */
+    }
 }
 
-.wrap {
-  max-width: var(--maxw);
-  margin: 0 auto;
-  padding: 16px 20px;
+/* ลบโค้ดเดิมที่กำหนด min-width ใน HTML ออก แต่กำหนดให้ยืดหยุ่น */
+header div[style*="min-width"] {
+    min-width: unset !important; /* ยกเลิกการตั้งค่า min-width เดิม */
+    width: auto; /* ให้ความกว้างปรับได้ */
 }
 
-.row {
-  display: flex;
-  gap: var(--gap);
-  flex-wrap: wrap;
-  align-items: center;
+/* 🟢 การปรับปรุง Header สำหรับ Mobile (สำคัญ) */
+@media (max-width: 900px) {
+    header .wrap{padding:10px 16px 15px;}
+    header .header-content{
+        flex-direction: column; /* บังคับให้ส่วนหลักเป็นแนวตั้ง */
+        align-items: flex-start;
+        gap: 10px;
+    }
+    header .row{width:100%;}
+    
+    header .grow{width:100%;}
+    header .sub{display:none;} /* ซ่อนรายละเอียดที่ไม่จำเป็นบนมือถือ */
+    
+    /* บังคับให้กลุ่มฟิลเตอร์เรียงเป็นคอลัมน์ และทุกฟิลเตอร์ใช้พื้นที่เต็ม */
+    .filter-group {
+        display: flex;
+        flex-direction: column; /* เรียง Search/Selects เป็นแนวตั้ง */
+        width: 100%;
+        gap: 10px; /* ช่องว่างระหว่าง Search/Selects */
+    }
+    .filter-group > div {
+        width: 100%; /* ให้ input/select ใช้พื้นที่เต็มความกว้าง */
+    }
+
 }
 
-.grow {
-  flex: 1;
-}
-
-.logo {
-  height: 42px;
-  width: auto;
-  filter: drop-shadow(0 2px 8px rgba(102, 126, 234, 0.5));
-}
-
-.sub {
-  opacity: 0.8;
-  font-size: 0.9rem;
-  margin-top: 4px;
-}
-
-/* Modern Banner */
-.banner {
-  width: 100%;
-  height: auto;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  display: block;
-  filter: brightness(0.95);
-}
-
-/* Notice Section */
-.notice {
-  max-width: var(--maxw);
-  margin: 20px auto 0;
-  padding: 0 20px;
-  color: var(--muted);
-}
-
-.notice .chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(102, 126, 234, 0.15);
-  border: 1px solid rgba(102, 126, 234, 0.3);
-  border-radius: 999px;
-  padding: 10px 16px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.notice .chip:hover {
-  background: rgba(102, 126, 234, 0.25);
-  transform: translateY(-2px);
-}
-
-/* Modern Grid */
-.grid {
-  max-width: var(--maxw);
-  margin: 30px auto 80px;
-  padding: 0 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
-}
-
-/* Modern Card Design */
-.card {
-  background: var(--card);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: var(--shadow);
-}
-
-.card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: var(--shadow-hover);
-  background: var(--card-hover);
-  border-color: rgba(102, 126, 234, 0.4);
-}
-
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--accent);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.card:hover::before {
-  opacity: 1;
-}
-
-/* Thumbnail Styling */
-.thumb {
-  background: linear-gradient(135deg, #0b0e11 0%, #1a1a2e 100%);
-  aspect-ratio: 16/10;
-  object-fit: cover;
-  width: 100%;
-  display: block;
-  transition: transform 0.4s ease;
-}
-
-.card:hover .thumb {
-  transform: scale(1.08);
-}
-
-/* Card Content */
-.ct {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.title {
-  font-weight: 800;
-  font-size: 1.1rem;
-  line-height: 1.3;
-  background: linear-gradient(135deg, #ffffff 0%, #a0aec0 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.muted {
-  opacity: 0.8;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.price {
-  font-weight: 900;
-  font-size: 1.4rem;
-  background: var(--accent);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Modern Badges */
-.badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 4px;
-}
-
-.badge {
-  background: rgba(102, 126, 234, 0.15);
-  border: 1px solid rgba(102, 126, 234, 0.3);
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.badge:hover {
-  background: rgba(102, 126, 234, 0.25);
-  transform: scale(1.05);
-}
-
-/* Modern Buy Button */
-.buybtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 12px;
-  font-weight: 800;
-  font-size: 0.9rem;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-  transition: all 0.3s ease;
-  width: 100%;
-}
-
-.buybtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-}
-
-.buybtn svg {
-  width: 18px;
-  height: 18px;
-}
-
-/* Modern Ribbon */
-.ribbon {
-  position: absolute;
-  top: 16px;
-  left: -38px;
-  transform: rotate(-25deg);
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: #fff;
-  padding: 8px 50px;
-  border: none;
-  font-weight: 900;
-  font-size: 0.85rem;
-  box-shadow: 0 4px 20px rgba(245, 87, 108, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* Modern New Tag */
-.newtag {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: 12px;
-  border: none;
-  font-weight: 900;
-  font-size: 0.8rem;
-  box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* Empty State */
-.empty {
-  opacity: 0.7;
-  text-align: center;
-  padding: 60px 20px;
-  font-size: 1.2rem;
-  color: var(--muted);
-}
-
-/* Modern Lightbox */
-.lightbox {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(10px);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-.lightbox.open {
-  display: flex;
-}
-
-.lb {
-  max-width: min(96vw, 1200px);
-  max-height: 92vh;
-  background: rgba(20, 25, 35, 0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 24px;
-  overflow: hidden;
-  color: var(--white);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-}
-
-.lb-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(102, 126, 234, 0.1);
-}
-
-.lb-body {
-  display: grid;
-  grid-template-columns: 1.25fr 0.75fr;
-  gap: 20px;
-  padding: 24px;
-  overflow-y: auto;
-  max-height: calc(92vh - 80px);
-}
-
-.lb-main {
-  height: min(64vh, 720px);
-  background: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.lb-main img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-.lb-thumbs {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.lb-thumbs img {
-  width: 100%;
-  height: 80px;
-  object-fit: cover;
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.lb-thumbs img:hover {
-  border-color: #667eea;
-  transform: scale(1.05);
-}
-
-.xbtn {
-  background: rgba(245, 87, 108, 0.2);
-  color: #f5576c;
-  border: 1px solid rgba(245, 87, 108, 0.5);
-  border-radius: 12px;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-weight: 700;
-  transition: all 0.3s ease;
-}
-
-.xbtn:hover {
-  background: rgba(245, 87, 108, 0.3);
-  transform: scale(1.05);
-}
-
-/* Footer */
-footer.f {
-  max-width: var(--maxw);
-  margin: 40px auto 80px;
-  color: var(--muted);
-  padding: 0 20px;
-  text-align: center;
-  opacity: 0.7;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 16px;
-  }
-  
-  .lb-body {
-    grid-template-columns: 1fr;
-  }
-  
-  .row {
-    gap: 12px;
-  }
+/* 🟢 โค้ดสำหรับจัดกลุ่ม Logo/Title ใน Header (Desktop) */
+@media (min-width: 901px) {
+    .wrap .header-content{
+        display:flex;
+        align-items:center;
+        gap:var(--gap);
+    }
+    .wrap .logo-info{
+        display:flex;
+        align-items:center;
+        width:auto;
+    }
+    .wrap .filter-group{
+        display:flex;
+        gap:var(--gap);
+        width:auto;
+    }
 }
 </style>
 </head>
 <body>
 <img class="banner" src="images/banner.png" alt="Banner">
 <header>
-  <div class="wrap row">
-    <img class="logo" src="images/logo.png" alt="โลโก้ร้าน">
-    <div class="grow">
-      <div style="font-weight:900; font-size: 1.2rem;">JUST COM</div>
-      <div class="sub">จำหน่ายและรับซื้ออุปกรณ์คอมพิวเตอร์ มือหนึ่ง-มือสอง • ตอนนี้คุณอยู่หมวด: <span id="currentCat">สินค้าทั้งหมด</span></div>
+<div class="wrap">
+    <div class="row header-content" style="width:100%;">
+        
+        <div class="logo-info">
+            <img class="logo" src="images/logo.png" alt="โลโก้ร้าน">
+            <div class="grow" style="margin-left:10px;">
+                <div style="font-weight:900">JUST COM</div>
+                <div class="sub">จำหน่ายและรับซื้ออุปกรณ์คอมพิวเตอร์ มือหนึ่ง-มือสอง • ตอนนี้คุณอยู่หมวด: <span id="currentCat">สินค้าทั้งหมด</span></div>
+            </div>
+        </div>
+        
+        <div class="filter-group grow">
+            <div><input id="q" placeholder="ค้นหา: ยี่ห้อ/แบรนด์/รุ่น/..."></div>
+            <div>
+                <select id="cat">
+                    <option value="">ทุกหมวดหมู่</option><option>การ์ดจอ (GPU)</option><option>ซีพียู (CPU)</option><option>เมนบอร์ด (Mainboard)</option><option>แรม (RAM)</option>
+                    <option>หน่วยความจำ (SSD/HDD)</option><option>พาวเวอร์ซัพพลาย (PSU)</option><option>ระบบระบายความร้อน/</option><option>เซ็ทรวม/อื่นๆ</option>
+                </select>
+            </div>
+            <div>
+                <select id="status">
+                    <option value="">สถานะ: ทั้งหมด</option><option value="active">พร้อมขาย</option><option value="hidden">ซ่อน</option><option value="sold">ขายแล้ว</option>
+                </select>
+            </div>
+        </div>
     </div>
-    <div style="min-width:240px"><input id="q" placeholder="🔍 ค้นหา: ยี่ห้อ/แบรนด์/รุ่น/..."></div>
-    <div style="min-width:160px">
-      <select id="cat">
-        <option value="">📦 ทุกหมวดหมู่</option>
-        <option>การ์ดจอ (GPU)</option>
-        <option>ซีพียู (CPU)</option>
-        <option>เมนบอร์ด (Mainboard)</option>
-        <option>แรม (RAM)</option>
-        <option>หน่วยความจำ (SSD/HDD)</option>
-        <option>พาวเวอร์ซัพพลาย (PSU)</option>
-        <option>ระบบระบายความร้อน/</option>
-        <option>เซ็ทรวม/อื่นๆ</option>
-      </select>
-    </div>
-    <div style="min-width:160px">
-      <select id="status">
-        <option value="">📊 สถานะ: ทั้งหมด</option>
-        <option value="active">✅ พร้อมขาย</option>
-        <option value="hidden">🔒 ซ่อน</option>
-        <option value="sold">❌ ขายแล้ว</option>
-      </select>
-    </div>
-  </div>
-</header>
-<div class="notice">
-  <span class="chip">✨ รายการสินค้า</span>
-  <span class="chip">📌 สินค้าที่ขายแล้วจะแสดงที่ด้านล่างสุด</span>
 </div>
+</header>
+<div class="notice"><span class="chip">รายการสินค้า</span><span class="chip">สินค้าที่ขายแล้วจะแสดงที่ด้านล่างสุด</span></div>
 <section class="grid" id="grid"></section>
-<div id="empty" class="empty" style="display:none">😔 ไม่พบสินค้าตามหัวข้อ</div>
-<footer class="f">© Copyright 2025 All Rights Reserved By Just Com.</footer>
+<div id="empty" class="empty" style="display:none">ไม่พบสินค้าตามหัวข้อ</div>
+<footer class="f"><center>© Copyright 2025 All Rights Reserved By Just Com.</center></footer>
+
+
 <div id="lightbox" class="lightbox" role="dialog" aria-modal="true">
-  <div class="lb">
-    <div class="lb-head">
-      <div id="lb-title" style="font-weight:900; font-size: 1.3rem;"></div>
-      <button id="lb-close" class="xbtn">✕ ปิด</button>
+    <div class="lb">
+        <div class="lb-head"><div id="lb-title" style="font-weight:900"></div><button id="lb-close" class="xbtn">ปิด</button></div>
+        <div class="lb-body">
+            
+            <div class="lb-top-section">
+                <div class="lb-main"><img id="lb-mainimg" alt=""></div>
+                
+                <div id="lb-thumbs" class="lb-thumbs-wrapper">
+                    </div>
+            </div>
+
+            <div class="lb-bottom-section">
+                <div>
+                    <div id="lb-spec" class="sub"></div>
+                </div>
+                <div>
+                    <div id="lb-desc" style="white-space:pre-wrap"></div>
+                </div>
+            </div>
+
+        </div>
     </div>
-    <div class="lb-body">
-      <div>
-        <div class="lb-main"><img id="lb-mainimg" alt=""></div>
-        <div id="lb-thumbs" class="lb-thumbs"></div>
-      </div>
-      <div>
-        <div id="lb-spec" class="sub"></div>
-        <div id="lb-desc" style="margin-top:16px; white-space:pre-wrap; line-height: 1.6;"></div>
-      </div>
-    </div>
-  </div>
 </div>
 <script>
-const CONFIG={mode:"csv",csvPath:"data/justcom_inventory.csv",gsheetCsvUrl:"",defaultOrderTarget:"facebook",facebookPageUrl:"https://m.me/justcomth",lineUrl:"https://line.me/R/ti/p/~your_line_id"};
+const CONFIG={
+mode:"csv",
+csvPath:"../data/justcom_inventory.csv", // ตรวจสอบพาธนี้!
+gsheetCsvUrl:"",
+defaultOrderTarget:"facebook",
+facebookPageUrl:"https://m.me/justcomth",
+lineUrl:"https://line.me/R/ti/p/~your_line_id"
+};
+
+
 function csvToArray(str,delim=","){const rows=str.split("\n").filter(x=>x.trim().length);if(!rows.length)return[];const headers=rows.shift().split(delim).map(h=>h.trim());return rows.map(row=>{const cols=[];let cur="",inQ=false;for(let i=0;i<row.length;i++){const c=row[i];if(c=='"'){inQ=!inQ;}else if(c===delim && !inQ){cols.push(cur);cur="";}else{cur+=c;}}cols.push(cur);const obj={};headers.forEach((h,i)=>obj[h]=(cols[i]??"").trim());return obj;});}
 function fmt(n){try{return Number(n).toLocaleString('th-TH');}catch(e){return n;}}
-function listify(s){return (s||"").split(",").map(x=>x.trim()).filter(Boolean);}
 function parseDate(s){if(!s) return 0;const t=s.trim().replace(" ","T");const d=new Date(t);return isNaN(d.getTime())?0:d.getTime();}
 function updateCurrentCat(){const cur=document.getElementById("cat").value||"";document.getElementById("currentCat").textContent=cur||"สินค้าทั้งหมด";}
 function pickBuyLink(item) {
-  const PAGE_URL = "https://www.facebook.com/share/1B8mNcdPZb/?mibextid=wwXIfr";
-  const dest = (
-    item["ปุ่มสั่งซื้อให้เด้งไปที่ (facebook|line|custom_url)"] ||
-    item["ปุ่มสั่งซื้อให้เด้งไปที่"] ||
-    CONFIG.defaultOrderTarget
-  ).toLowerCase();
-  const fb = item["ลิงก์โพสต์ Facebook (ถ้ามี)"] || PAGE_URL;
-  const custom = item["ลิงก์ปลายทางปุ่มสั่งซื้อ (ถ้าเลือก custom_url ให้ใส่ที่นี่)"] || "";
-  if (dest === "facebook") return fb;
-  if (dest === "line") return CONFIG.lineUrl;
-  if (dest === "custom_url") return custom || PAGE_URL;
-  return PAGE_URL;
+const PAGE_URL = "https://www.facebook.com/share/1B8mNcdPZb/?mibextid=wwXIfr";
+const dest = (
+item["ปุ่มสั่งซื้อให้เด้งไปที่ (facebook|line|custom_url)"] ||
+item["ปุ่มสั่งซื้อให้เด้งไปที่"] ||
+CONFIG.defaultOrderTarget
+).toLowerCase();
+const fb = item["ลิงก์โพสต์ Facebook (ถ้ามี)"] || PAGE_URL;
+const custom = item["ลิงก์ปลายทางปุ่มสั่งซื้อ (ถ้าเลือก custom_url ให้ใส่ที่นี่)"] || "";
+if (dest === "facebook") return fb;
+if (dest === "line") return CONFIG.lineUrl;
+if (dest === "custom_url") return custom || PAGE_URL;
+return PAGE_URL;
 }
 function isNewItem(item){const tags=(item["แท็ก (คั่นด้วย ,)"]||"").toLowerCase();if(tags.includes("new"))return true;const d=item["วันที่รับของ (YYYY-MM-DD)"]||"";if(!/^\d{4}-\d{2}-\d{2}$/.test(d))return false;const now=new Date(),dt=new Date(d+"T00:00:00");const diff=(now-dt)/86400000;return diff<=14;}
-const lb={root:null,main:null,thumbs:null,title:null,spec:null,desc:null,open(item){const imgs=[item["ลิงก์รูปภาพหลัก"],...(item["ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)"]||"").split(",").map(s=>s.trim()).filter(Boolean)].filter(Boolean);this.title.textContent=item["ชื่อสินค้า"]||item["รุ่นย่อย"]||item["SKU"]||"";this.main.src=imgs[0]||"";this.thumbs.innerHTML="";imgs.forEach((u,i)=>{const im=document.createElement("img");im.src=u;im.alt="img"+i;im.addEventListener("click",()=>this.main.src=u);this.thumbs.appendChild(im);});this.spec.innerHTML=[item["ยี่ห้อ/แบรนด์"]?`<div><b>แบรนด์:</b> ${item["ยี่ห้อ/แบรนด์"]}</div>`:"",item["รุ่นย่อย"]?`<div><b>รุ่น:</b> ${item["รุ่นย่อย"]}</div>`:"",item["ชิป/ซีรีส์ (ถ้าเป็นการ์ดจอให้ใส่เช่น RTX 3060 Ti / RX 6700 XT)"]?`<div><b>ชิป/ซีรีส์:</b> ${item["ชิป/ซีรีส์ (ถ้าเป็นการ์ดจอให้ใส่เช่น RTX 3060 Ti / RX 6700 XT)"]}</div>`:"",item["สเปกย่อย (VRAM/ขนาด/สี ฯลฯ)"]?`<div><b>สเปก:</b> ${item["สเปกย่อย (VRAM/ขนาด/สี ฯลฯ)"]}</div>`:"",item["สภาพ"]?`<div><b>สภาพ:</b> ${item["สภาพ"]}</div>`:"",item["รับประกัน (วัน)"]?`<div><b>ประกัน:</b> ${item["รับประกัน (วัน)"]} วัน</div>`:"",item["ราคา (THB)"]?`<div><b>ราคา:</b> ${fmt(item["ราคา (THB)"])} ฿</div>`:""] .filter(Boolean).join("");this.desc.textContent=item["รายละเอียดเพิ่มเติม"]||"";this.root.classList.add("open");},close(){this.root.classList.remove("open");this.main.src="";this.thumbs.innerHTML="";this.spec.innerHTML="";this.desc.textContent="";}};
+
+// OBJECT และฟังก์ชันสำหรับจัดการ LIGHTBOX GALLERY
+const lb={root:null,main:null,thumbs:null,title:null,spec:null,desc:null,open(item){
+const primaryImg = item["ลิงก์รูปภาพหลัก"];
+
+// **แก้ไขชื่อคอลัมน์ให้ตรงกับ CSV ของคุณ (Image 1, Image 2, ...)**
+const additionalImgs = [
+    item["Image 1"], // แก้ไขตรงนี้
+    item["Image 2"], // แก้ไขตรงนี้
+    item["Image 3"], // แก้ไขตรงนี้
+    item["Image 4"], // แก้ไขตรงนี้
+    item["Image 5"]  // แก้ไขตรงนี้
+].filter(Boolean).map(u => u.trim());
+
+const imgs = [primaryImg, ...additionalImgs].filter(Boolean);
+
+this.title.textContent=item["ชื่อสินค้า"]||item["รุ่นย่อย"]||item["SKU"]||"";
+this.main.src=imgs[0]||""; 
+this.thumbs.innerHTML="";
+
+imgs.forEach((u,i)=>{
+const im=document.createElement("img");
+im.src=u; 
+im.alt="img"+i;
+im.addEventListener("click",()=>{
+    this.main.src=u;
+    Array.from(this.thumbs.children).forEach(thumb => {
+        thumb.style.borderColor = 'var(--line)'; 
+    });
+    im.style.borderColor = 'var(--white)';
+});
+this.thumbs.appendChild(im);
+
+if (i === 0) {
+    im.style.borderColor = 'var(--white)';
+}
+
+});
+
+this.spec.innerHTML=[item["ยี่ห้อ/แบรนด์"]?`<div><b>แบรนด์:</b> ${item["ยี่ห้อ/แบรนด์"]}</div>`:"",item["รุ่นย่อย"]?`<div><b>รุ่น:</b> ${item["รุ่นย่อย"]}</div>`:"",item["ชิป/ซีรีส์ (ถ้าเป็นการ์ดจอให้ใส่เช่น RTX 3060 Ti / RX 6700 XT)"]?`<div><b>ชิป/ซีรีส์:</b> ${item["ชิป/ซีรีส์ (ถ้าเป็นการ์ดจอให้ใส่เช่น RTX 3060 Ti / RX 6700 XT)"]}</div>`:"",item["สเปกย่อย (VRAM/ขนาด/สี ฯลฯ)"]?`<div><b>สเปก:</b> ${item["สเปกย่อย (VRAM/ขนาด/สี ฯลฯ)"]}</div>`:"",item["สภาพ"]?`<div><b>สภาพ:</b> ${item["สภาพ"]}</div>`:"",item["รับประกัน (วัน)"]?`<div><b>ประกัน:</b> ${item["รับประกัน (วัน)"]} วัน</div>`:"",item["ราคา (THB)"]?`<div><b>ราคา:</b> ${fmt(item["ราคา (THB)"])} ฿</div>`:""] .filter(Boolean).join("");
+this.desc.textContent=item["รายละเอียดเพิ่มเติม"]||"";
+this.root.classList.add("open");
+},close(){this.root.classList.remove("open");this.main.src="";this.thumbs.innerHTML="";this.spec.innerHTML="";this.desc.textContent="";}};
+
 function initLightbox(){lb.root=document.getElementById("lightbox");lb.main=document.getElementById("lb-mainimg");lb.thumbs=document.getElementById("lb-thumbs");lb.title=document.getElementById("lb-title");lb.spec=document.getElementById("lb-spec");lb.desc=document.getElementById("lb-desc");document.getElementById("lb-close").addEventListener("click",()=>lb.close());lb.root.addEventListener("click",(e)=>{if(e.target===lb.root)lb.close();});}
-function render(items){const grid=document.getElementById("grid");const empty=document.getElementById("empty");grid.innerHTML="";if(!items.length){empty.style.display="block";return;}empty.style.display="none";items.forEach(item=>{if((item["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="hidden")return;const imgs=[item["ลิงก์รูปภาพหลัก"],...listify(item["ลิงก์รูปภาพเพิ่มเติม (คั่นด้วย ,)"])].filter(Boolean);const cover=imgs[0]||"";const price=item["ราคา (THB)"]?fmt(item["ราคา (THB)"])+" บาท":"สอบถามราคา";const buy=pickBuyLink(item);const status=(item["สถานะประกาศ (active|hidden|sold)"]||"active").toLowerCase();const badgeList=[];if(item["จำนวนคงเหลือ"])badgeList.push("📦 คงเหลือ "+item["จำนวนคงเหลือ"]);if(item["รับประกัน (วัน)"])badgeList.push("🛡️ ประกัน "+item["รับประกัน (วัน)"]+" วัน");if(item["ชิป/ซีรีส์ (ถ้าเป็นการ์ดจอให้ใส่เช่น RTX 3060 Ti / RX 6700 XT)"])badgeList.push("⚡ "+item["ชิป/ซีรีส์ (ถ้าเป็นการ์ดจอให้ใส่เช่น RTX 3060 Ti / RX 6700 XT)"]);const card=document.createElement("div");card.className="card";card.innerHTML=`${cover?`<img class="thumb" src="${cover}" alt="">`:`<div class="thumb"></div>`}${status==="sold"?`<div class="ribbon">SOLD OUT</div>`:""}${isNewItem(item)?`<div class="newtag">NEW</div>`:""}<div class="ct"><div class="title">${item["ชื่อสินค้า"]||item["รุ่นย่อย"]||item["SKU"]||"สินค้าไม่ระบุชื่อ"}</div><div class="muted">${item["ยี่ห้อ/แบรนด์"]||""} ${item["รุ่นย่อย"]?("• "+item["รุ่นย่อย"]):""}</div><div class="price">${price}</div><div class="badges">${badgeList.map(b=>`<span class="badge">${b}</span>`).join(" ")}</div><div class="row" style="gap:10px"><a class="buybtn" href="${buy}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🛒 สั่งซื้อเลย</a></div></div>`;card.addEventListener("click",()=>lb.open(item));grid.appendChild(card);});}
-async function boot(){initLightbox();const q=document.getElementById("q");const cat=document.getElementById("cat");const status=document.getElementById("status");async function loadData(){let url=CONFIG.csvPath;if(CONFIG.mode==="gsheet"&&CONFIG.gsheetCsvUrl)url=CONFIG.gsheetCsvUrl;const res=await fetch(url+(url.includes("?")?"&":"?")+"v="+Date.now());const text=await res.text();return csvToArray(text);}function apply(list){const qv=q
+
+// ฟังก์ชันสำหรับแสดงผล Card สินค้า
+function render(items){const grid=document.getElementById("grid");const empty=document.getElementById("empty");grid.innerHTML="";if(!items.length){empty.style.display="block";return;}empty.style.display="none";items.forEach(item=>{if((item["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="hidden")return;
+// **แก้ไขชื่อคอลัมน์ให้ตรงกับ CSV ของคุณ (Image 1, Image 2, ...)**
+const allImgs = [
+    item["ลิงก์รูปภาพหลัก"], 
+    item["Image 1"], // แก้ไขตรงนี้
+    item["Image 2"], // แก้ไขตรงนี้
+    item["Image 3"], // แก้ไขตรงนี้
+    item["Image 4"], // แก้ไขตรงนี้
+    item["Image 5"]  // แก้ไขตรงนี้
+].filter(Boolean).map(u => u.trim());
+
+const cover=allImgs[0]||""; 
+const price=item["ราคา (THB)"]?fmt(item["ราคา (THB)"])+" บาท":"สอบถามราคา";
+const buy=pickBuyLink(item);
+const status=(item["สถานะประกาศ (active|hidden|sold)"]||"active").toLowerCase();
+const badgeList=[];if(item["จำนวนคงเหลือ"])badgeList.push("คงเหลือ "+item["จำนวนคงเหลือ"]);if(item["รับประกัน (วัน)"])badgeList.push("ประกัน "+item["รับประกัน (วัน)"]+" วัน");if(item["ชิป/ซีรีส์ (ถ้าเป็นการ์ดจอให้ใส่เช่น RTX 3060 Ti / RX 6700 XT)"])badgeList.push(item["ชิป/ซีรีส์ (ถ้าเป็นการ์ดจอให้ใส่เช่น RTX 3060 Ti / RX 6700 XT)"]);const card=document.createElement("div");card.className="card";card.innerHTML=`${cover?`<img class="thumb" src="${cover}" alt="">`:`<div class="thumb"></div>`}${status==="sold"?`<div class="ribbon">SOLD OUT</div>`:""}${isNewItem(item)?`<div class="newtag">NEW</div>`:""}<div class="ct"><div class="title">${item["ชื่อสินค้า"]||item["รุ่นย่อย"]||item["SKU"]||"สินค้าไม่ระบุชื่อ"}</div><div class="muted">${item["ยี่ห้อ/แบรนด์"]||""} ${item["รุ่นย่อย"]?("• "+item["รุ่นย่อย"]):""}</div><div class="price">${price}</div><div class="badges">${badgeList.map(b=>`<span class="badge">${b}</span>`).join(" ")}</div><div class="row" style="gap:10px"><a class="buybtn" href="${buy}" target="_blank" rel="noopener" onclick="event.stopPropagation()">สั่งซื้อ<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 12.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg></a></div></div>`;card.addEventListener("click",()=>lb.open(item));grid.appendChild(card);});}
+
+async function boot(){
+initLightbox();
+const q=document.getElementById("q");
+const cat=document.getElementById("cat");
+const status=document.getElementById("status");
+
+async function loadData(){
+let url=CONFIG.csvPath;
+if(CONFIG.mode==="gsheet"&&CONFIG.gsheetCsvUrl)url=CONFIG.gsheetCsvUrl;
+try {
+const res=await fetch(url+(url.includes("?")?"&":"?")+"v="+Date.now());
+if (!res.ok) throw new Error("Failed to fetch CSV");
+const text=await res.text();
+return csvToArray(text);
+} catch (error) {
+console.warn("Error fetching CSV from server. Using fallback data.", error);
+return []; 
+}
+}
+
+function apply(list){
+const qv=q.value.trim();
+const cv=cat.value.trim();
+const sv=status.value.trim();
+let items=[...list];
+
+if(qv)items=items.filter(it=>{const hay=[it["ชื่อสินค้า"],it["ยี่ห้อ/แบรนด์"],it["รุ่นย่อย"],it["หมวดหมู่"],it["แท็ก (คั่นด้วย ,)"],it["SKU"]].join(" ").toLowerCase();return hay.includes(qv.toLowerCase());});
+if(cv)items=items.filter(it=>(it["หมวดหมู่"]||"")===cv);
+if(sv)items=items.filter(it=>(it["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()===sv);
+
+items.sort((a,b)=>{
+const sa=((a["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold")?1:0;
+const sb=((b["สถานะประกาศ (active|hidden|sold)"]||"").toLowerCase()==="sold")?1:0;
+if(sa!==sb)return sa-sb;
+const da=parseDate(a["อัปเดตล่าสุด (YYYY-MM-DD HH:MM)"])||parseDate(a["วันที่รับของ (YYYY-MM-DD)"]);
+const db=parseDate(b["อัปเดตล่าสุด (YYYY-MM-DD HH:MM)"])||parseDate(b["วันที่รับของ (YYYY-MM-DD)"]);
+if(da!==db)return db-da;
+const pa=Number(a["ราคา (THB)"]||0);
+const pb=Number(b["ราคา (THB)"]||0);
+return pb-pa;
+});
+
+render(items);
+}
+
+const data=await loadData();
+apply(data);
+q.addEventListener("input",()=>apply(data));
+cat.addEventListener("change",()=>{updateCurrentCat();apply(data);});
+status.addEventListener("change",()=>apply(data));
+updateCurrentCat();
+}
+boot();
+</script>
+</body>
+</html>
