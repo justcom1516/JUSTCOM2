@@ -326,7 +326,7 @@
                         const quill = quillEditors.get(tr);
                         if (quill) {
                             const html = quill.root.innerHTML;
-                            val = btoa(unescape(encodeURIComponent(html))); // encode UTF-8
+                            val = btoa(unescape(encodeURIComponent(html)));
                         }
                     } else {
                         const el = td.querySelector("input,select");
@@ -340,12 +340,22 @@
             });
 
             const blob = new Blob(["\uFEFF" + rows.join("\n")], { type: "text/csv;charset=utf-8;" });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "justcom_inventory.csv";
-            link.click();
-        }
+            const url = URL.createObjectURL(blob);
 
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "justcom_inventory.csv";
+            link.target = "_blank"; // เพิ่ม target ให้ browser พิจารณาเปิด Save As
+            link.rel = "noopener noreferrer"; // ป้องกัน warning
+
+            // เพิ่มเล็กน้อยเพื่อให้ click เป็น user-initiated
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // ล้าง object URL หลังใช้
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
     </script>
 </body>
 
